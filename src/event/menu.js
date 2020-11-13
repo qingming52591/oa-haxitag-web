@@ -1,7 +1,5 @@
 import axios from "axios";
 import {store, actions} from "../store";
-import * as g from '../g'
-import * as util from '../util'
 import config from "../conf";
 import * as http from "../util/http";
 // 创建菜单
@@ -28,12 +26,10 @@ const buildMenu = (menu_data) => {
         } else {
             chidren[item._id] = item
         }
+        return item
     })
-    Object.values(chidren).map((item) => {
-        if (item.parent_id in parents) {
-            parents[item.parent_id].children.push(item)
-        }
-    })
+    Object.values(chidren).filter(item => item.parent_id in parents).map((item) =>
+        parents[item.parent_id].children.push(item))
     return Object.values(parents)
 }
 

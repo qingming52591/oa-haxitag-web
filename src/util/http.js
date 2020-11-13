@@ -9,7 +9,7 @@ export const getHttpHeardData = (resp) => {
         if (resp.data.code === g.code.success) {
             store.dispatch({type: actions.user.info.UPDATE_TOKEN, token: resp.headers.token})
             result = {...result, ...{headers: resp.headers, data: resp.data}}
-        } else if (resp.data.code == g.code.auth_error) {
+        } else if (resp.data.code === g.code.auth_error) {
             store.dispatch({type: actions.user.info.UPDATE_TOKEN, token: ''})
         } else {
             message.error(resp.data.msg)

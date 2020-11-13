@@ -1,5 +1,4 @@
 import produce from "immer";
-import * as g from "../../g";
 
 // initState
 export const state = {

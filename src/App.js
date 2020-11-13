@@ -8,8 +8,11 @@ import * as event from './event/user'
 const App = (props) => {
     const state = store.useContext();
 
-    React.useEffect(async () => {
-        await event.onLogin()
+    React.useEffect(() => {
+        const onLogin = async () => {
+            await event.onLogin()
+        }
+        onLogin()
     }, [])
 
     if (!state.user.info.token) {

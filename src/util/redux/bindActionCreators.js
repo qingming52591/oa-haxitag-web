@@ -15,6 +15,7 @@ function bindActionCreators(actionCreators, dispatch) {
     var result = {};
     actionCreatorKeys.map(key => {
         result[key] = bindActionCreator(actionCreators[key], dispatch);
+        return key
     })
     return result;
 }

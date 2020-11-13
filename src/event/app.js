@@ -2,8 +2,6 @@ import axios from "axios";
 import {store, actions} from "../store";
 import config from "../conf";
 import * as http from "../util/http";
-import {message} from "antd";
-import * as g from '../g'
 
 export const saveApp = async (formData) => {
     const state = store.getState()

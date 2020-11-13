@@ -4,12 +4,16 @@ import * as event from '../../event'
 
 export const IFrame = (props) => {
     const [app, setApp] = React.useState({_id: '', enter: '', name: ''})
-    React.useEffect(async () => {
-        let data = await event.app.getAppById(props.match.params.app_id)
-        if (data && data.app) {
-            setApp(data.app)
+    React.useEffect(() => {
+        const getAppById = async () => {
+            let data = await event.app.getAppById(props.match.params.app_id)
+            if (data && data.app) {
+                setApp(data.app)
+            }
         }
-    }, [])
+        getAppById()
+    }, [props.match.params.app_id])
+
     return (
         <div>
             <Iframe url={app.enter}

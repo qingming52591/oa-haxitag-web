@@ -1,11 +1,8 @@
 import React from "react"
-import {store} from "../store";
-import {Row, Col, Form, Input, Button, Checkbox} from "antd";
+import {Row, Col, Form, Input, Button} from "antd";
 import * as event from '../event'
 
 const Login = (props) => {
-    const state = store.useContext();
-    const [form] = Form.useForm()
     return (
         <Row type="flex" justify="center" align="middle" style={{minHeight: '100vh'}}>
             <Col>

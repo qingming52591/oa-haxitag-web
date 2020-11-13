@@ -8,8 +8,12 @@ export const App = (props) => {
     const state = store.useContext()
     const [showModal, setShowModal] = React.useState(false)
     const [modalInit, setModalInit] = React.useState({})
-    React.useEffect(async () => {
-        await event.app.getApp()
+    React.useEffect(() => {
+
+        const getApp = async () => {
+            await event.app.getApp()
+        }
+        getApp()
     }, [])
     const columns = [
         {

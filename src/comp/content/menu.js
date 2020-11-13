@@ -2,7 +2,6 @@ import React from 'react'
 import {store} from "../../store"
 import * as event from '../../event'
 import * as comp from '../content'
-import * as util from '../../util'
 import * as g from '../../g'
 import {Button, Col, Row, Table, Modal, Form, Input, message, Radio, Select, InputNumber} from "antd";
 
@@ -10,9 +9,13 @@ export const Menu = (props) => {
     const state = store.useContext()
     const [showModal, setShowModal] = React.useState(false)
     const [modalInit, setModalInit] = React.useState({})
-    React.useEffect(async () => {
-        await event.menu.getMenu()
+    React.useEffect(() => {
+        const getMenu = async () => {
+            await event.menu.getMenu()
+        }
+        getMenu()
     }, [])
+
     const columns = [
         {
             title: 'name',
@@ -35,6 +38,17 @@ export const Menu = (props) => {
             title: 'path',
             dataIndex: 'path',
             key: '_id'
+        },
+        {
+            title: '操作',
+            key: 'action',
+            render: (text, record) => (
+                <Button onClick={(e) => {
+                    e.stopPropagation()
+                    alert('hello')
+                    return false
+                }}>删除</Button>
+            ),
         }
     ]
     return (
@@ -102,10 +116,14 @@ export const MenuGroup = (props) => {
 const EditMenu = (props) => {
     const state = store.useContext()
     const [form] = Form.useForm()
-    React.useEffect(async () => {
-        await event.app.getApp()
-        await event.menu.getMenu()
+    React.useEffect(() => {
+        const temp = async () => {
+            await event.app.getApp()
+            await event.menu.getMenu()
+        }
+        temp()
     }, [])
+
     form.setFieldsValue(props.initData)
     return (
         <>
@@ -179,11 +197,8 @@ const EditMenu = (props) => {
                     <Form.Item label={'父菜单'} name={'parent_id'}>
                         <Select allowClear>
                             {
-                                state.setting.menu.menu.map((item) => {
-                                    if (item.type === g.menu.MENU) {
-                                        return <Select.Option value={item._id}> {item.name}</Select.Option>
-                                    }
-                                })
+                                state.setting.menu.menu.filter(item => item.type === g.menu.MENU).map((item) =>
+                                    <Select.Option value={item._id}> {item.name}</Select.Option>)
                             }
                         </Select>
                     </Form.Item>
