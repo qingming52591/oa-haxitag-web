@@ -2,7 +2,9 @@ import axios from "axios";
 import {store, actions} from "../store";
 import config from "../conf";
 import * as http from "../util/http";
-// 创建菜单
+import qs from 'qs'
+
+// 创建& 编辑 菜单
 export const createMenu = async (formData) => {
     const state = store.getState()
     let push_data = {...formData}
@@ -15,6 +17,18 @@ export const createMenu = async (formData) => {
     }
 }
 
+// 删除菜单
+export const deleteMenu = async (menu_id) => {
+    const state = store.getState()
+    let r = await axios.post(`${config.API_OA_BASE}/v1/menu/delete`, qs.stringify({menu_id}), {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        await getMenu()
+        await getMenu({user: true})
+        return true
+    }
+
+}
 // 组织菜单
 const buildMenu = (menu_data) => {
     let parents = {}
@@ -36,7 +50,7 @@ const buildMenu = (menu_data) => {
 // 获取菜单
 /*参数user 标识获取用户菜单*/
 export const getMenu = async (user = false) => {
-    let state = store.getState()
+    const state = store.getState()
     if (user) {
         let r = await axios.get(`${config.API_OA_BASE}/v1/user/menu`, {headers: {token: state.user.info.token}})
         let {headers, data} = http.getHttpHeardData(r)

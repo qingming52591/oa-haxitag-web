@@ -7,6 +7,10 @@ export const menu = {
     MENU: 0, // 菜单类型
     MENU_ITEM: 1, // 菜单项类型
 }
+export const menu_desc = {
+    [menu.MENU]: '菜单',
+    [menu.MENU_ITEM]: '菜单项'
+}
 export const menu_state = {
     fixed: -1, // 默认
     normal: 0 // 正常

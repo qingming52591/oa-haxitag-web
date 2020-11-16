@@ -1,11 +1,13 @@
 import * as g from '../g'
 import {message} from "antd";
 import {actions, store} from "../store";
+import * as util from '../util'
 
 
 export const getHttpHeardData = (resp) => {
     let result = {headers: null, data: null}
     if (resp.status === 200) {
+        util.log(resp)
         if (resp.data.code === g.code.success) {
             store.dispatch({type: actions.user.info.UPDATE_TOKEN, token: resp.headers.token})
             result = {...result, ...{headers: resp.headers, data: resp.data}}

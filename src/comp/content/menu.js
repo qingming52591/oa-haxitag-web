@@ -3,12 +3,18 @@ import {store} from "../../store"
 import * as event from '../../event'
 import * as comp from '../content'
 import * as g from '../../g'
-import {Button, Col, Row, Table, Modal, Form, Input, message, Radio, Select, InputNumber} from "antd";
+import * as util from '../../util'
+import {Button, Col, Row, Table, Modal, Form, Input, message, Radio, Select, InputNumber, Popconfirm} from "antd";
 
 export const Menu = (props) => {
     const state = store.useContext()
     const [showModal, setShowModal] = React.useState(false)
     const [modalInit, setModalInit] = React.useState({})
+    let menus = {}
+    state.setting.menu.menu.map(item => {
+        menus[item._id] = item
+        return item
+    })
     React.useEffect(() => {
         const getMenu = async () => {
             await event.menu.getMenu()
@@ -18,37 +24,57 @@ export const Menu = (props) => {
 
     const columns = [
         {
-            title: 'name',
+            title: '名称',
             dataIndex: 'name',
-            key: '_id',
+            key: 'name',
             fixed: 'left'
         }, {
-            title: 'english_name',
+            title: '英文名',
             dataIndex: 'english_name',
-            key: '_id',
+            key: 'english_name',
         }, {
-            title: 'menu_type',
-            dataIndex: 'menu_type',
-            key: '_id'
+            title: '类型',
+            dataIndex: 'type',
+            key: 'type',
+            render: (text, record) => {
+                return g.menu_desc[record.type]
+            }
         }, {
-            title: 'parent_name',
+            title: '父菜单',
             dataIndex: 'parent_name',
-            key: '_id'
+            key: 'parent_name',
+            render: (text, record) => {
+                if (record.parent_id) {
+                    return menus[record.parent_id].name
+                }
+                return '根'
+
+            }
         }, {
-            title: 'path',
+            title: '路径',
             dataIndex: 'path',
-            key: '_id'
+            key: 'path'
         },
         {
             title: '操作',
             key: 'action',
-            render: (text, record) => (
-                <Button onClick={(e) => {
-                    e.stopPropagation()
-                    alert('hello')
-                    return false
-                }}>删除</Button>
-            ),
+            render: (text, record) => {
+                if (record.state === g.menu_state.fixed) {
+                    return <Button danger disabled>删除</Button>
+                } else {
+                    return (
+                        <Popconfirm title="会同时清理相关联菜单组，确认删除吗?"
+                                    cancelText={"取消"} okText={'确定'}
+                                    onCancel={(e) => e.stopPropagation()}
+                                    onConfirm={async (e) => {
+                                        e.stopPropagation()
+                                        await event.menu.deleteMenu(record._id)
+                                    }}>
+                            <Button danger onClick={(e) => e.stopPropagation()}>删除</Button>
+                        </Popconfirm>)
+                }
+
+            }
         }
     ]
     return (
@@ -80,6 +106,7 @@ export const Menu = (props) => {
                 dataSource={state.setting.menu.menu}
                 size={'small'}
                 scroll={{y: 750}}
+                bordered
                 onRow={(record) => {
                     return {
                         onClick: (event) => {

@@ -1,7 +1,8 @@
 import {store} from "../../store";
-import {Col, Row, Button, Form, Input, message, Modal, Table} from "antd";
+import {Col, Row, Button, Form, Input, message, Modal, Table, Popconfirm} from "antd";
 import * as event from "../../event";
 import React from 'react'
+import * as g from "../../g";
 
 
 export const App = (props) => {
@@ -22,8 +23,28 @@ export const App = (props) => {
             key: 'name',
         }, {
             title: 'enter',
-            dataIndex: 'english_name',
+            dataIndex: 'enter',
             key: 'enter',
+        }, {
+            title: '操作',
+            key: 'action',
+            render: (text, record) => {
+                if (record.state === g.menu_state.fixed) {
+                    return <Button danger disabled>删除</Button>
+                } else {
+                    return (
+                        <Popconfirm title="会同时清理相关联菜单、菜单组和用户权限，确认删除吗?"
+                                    cancelText={"取消"} okText={'确定'}
+                                    onCancel={(e) => e.stopPropagation()}
+                                    onConfirm={async (e) => {
+                                        e.stopPropagation()
+                                        await event.app.deleteApp(record._id)
+                                    }}>
+                            <Button danger onClick={(e) => e.stopPropagation()}>删除</Button>
+                        </Popconfirm>)
+                }
+
+            }
         }
     ]
     return (
@@ -46,6 +67,7 @@ export const App = (props) => {
                 dataSource={state.setting.app.app}
                 size={'small'}
                 scroll={{y: 750}}
+                bordered
                 onRow={(record) => {
                     return {
                         onClick: (event) => {

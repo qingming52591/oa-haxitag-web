@@ -5,14 +5,14 @@ import reportWebVitals from './reportWebVitals';
 import {Provider} from './store'
 import App from './App'
 import * as util from './util'
-import {BrowserRouter} from "react-router-dom";
+import {Router} from "react-router-dom";
 
 
 ReactDOM.render(
     <Provider>
-        <BrowserRouter history={util.history}>
+        <Router history={util.history}>
             <App/>
-        </BrowserRouter>
+        </Router>
     </Provider>,
     document.getElementById('root')
 );
