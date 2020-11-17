@@ -3,7 +3,6 @@ import {store} from "../../store"
 import * as event from '../../event'
 import * as comp from '../content'
 import * as g from '../../g'
-import * as util from '../../util'
 import {Button, Col, Row, Table, Modal, Form, Input, message, Radio, Select, InputNumber, Popconfirm} from "antd";
 
 export const Menu = (props) => {
