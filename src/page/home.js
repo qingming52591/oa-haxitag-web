@@ -5,11 +5,12 @@ import {
 } from '@ant-design/icons';
 import React from "react"
 import {store} from "../store";
-import {Layout, Menu} from 'antd';
+import {Col, Layout, Menu, Row, Space} from 'antd';
 import * as event from '../event'
 import {Route, Switch, Link} from "react-router-dom";
 import * as comps from '../comp/content'
 import * as g from '../g'
+import config from "../conf";
 
 const {SubMenu} = Menu
 const {Header, Content, Sider, Footer} = Layout
@@ -24,7 +25,11 @@ const Home = (props) => {
     return (
         <Layout style={{minHeight: '100vh'}}>
             <Sider theme="light" collapsible collapsed={state.page.home.collapsed} onCollapse={event.home.onCollapse}>
-                <div className="logo">LOGO</div>
+                <Row>
+                    <Col span={4}></Col>
+                    <Col span={20}><h3>{config.TITLE}</h3></Col>
+                    <Col span={4}></Col>
+                </Row>
                 <Menu mode="inline">
                     {state.user.menu.user_menu.map((item) => {
                         let t = item
