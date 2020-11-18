@@ -3,7 +3,22 @@ import {store} from "../../store"
 import * as event from '../../event'
 import * as comp from '../content'
 import * as g from '../../g'
-import {Button, Col, Row, Table, Modal, Form, Input, message, Radio, Select, InputNumber, Popconfirm} from "antd";
+import {
+    Space,
+    Button,
+    Col,
+    Row,
+    Table,
+    Modal,
+    Form,
+    Input,
+    message,
+    Radio,
+    Select,
+    InputNumber,
+    Popconfirm
+} from "antd";
+import * as util from '../../util'
 
 export const Menu = (props) => {
     const state = store.useContext()
@@ -26,7 +41,8 @@ export const Menu = (props) => {
             title: '名称',
             dataIndex: 'name',
             key: 'name',
-            fixed: 'left'
+            fixed: 'left',
+            ...util.getColSearchLocal('名称', 'name')
         }, {
             title: '英文名',
             dataIndex: 'english_name',

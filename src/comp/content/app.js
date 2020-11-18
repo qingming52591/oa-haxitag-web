@@ -3,6 +3,7 @@ import {Col, Row, Button, Form, Input, message, Modal, Table, Popconfirm} from "
 import * as event from "../../event";
 import React from 'react'
 import * as g from "../../g";
+import * as util from '../../util'
 
 
 export const App = (props) => {
@@ -18,11 +19,12 @@ export const App = (props) => {
     }, [])
     const columns = [
         {
-            title: 'name',
+            title: 'App名称',
             dataIndex: 'name',
             key: 'name',
+            ...util.getColSearchLocal('App名称', 'name')
         }, {
-            title: 'enter',
+            title: '入口地址',
             dataIndex: 'enter',
             key: 'enter',
         }, {

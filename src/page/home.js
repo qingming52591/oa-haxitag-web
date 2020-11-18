@@ -5,7 +5,7 @@ import {
 } from '@ant-design/icons';
 import React from "react"
 import {store} from "../store";
-import {Col, Layout, Menu, Row, Space} from 'antd';
+import {Col, Layout, Menu, Row} from 'antd';
 import * as event from '../event'
 import {Route, Switch, Link} from "react-router-dom";
 import * as comps from '../comp/content'

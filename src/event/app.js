@@ -4,6 +4,7 @@ import config from "../conf";
 import * as http from "../util/http";
 import qs from 'qs'
 import * as event from '../event'
+import * as util from '../util'
 
 
 // 删除App
@@ -21,13 +22,17 @@ export const deleteApp = async (app_id) => {
 }
 
 export const saveApp = async (formData) => {
-    const state = store.getState()
-    let push_data = {...formData}
-    let r = await axios.post(`${config.API_OA_BASE}/v1/app/save`, push_data, {headers: {token: state.user.info.token}})
-    let {headers, data} = http.getHttpHeardData(r)
-    if (headers && data) {
-        await getApp()
-        return true
+    try {
+        const state = store.getState()
+        let push_data = {...formData}
+        let r = await axios.post(`${config.API_OA_BASE}/v1/app/save`, push_data, {headers: {token: state.user.info.token}})
+        let {headers, data} = http.getHttpHeardData(r)
+        if (headers && data) {
+            await getApp()
+            return true
+        }
+    } catch (e) {
+        util.log(e, true)
     }
 }
 
