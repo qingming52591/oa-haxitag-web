@@ -25,10 +25,8 @@ const Home = (props) => {
     return (
         <Layout style={{minHeight: '100vh'}}>
             <Sider theme="light" collapsible collapsed={state.page.home.collapsed} onCollapse={event.home.onCollapse}>
-                <Row>
-                    <Col span={4}></Col>
-                    <Col span={20}><h3>{config.TITLE}</h3></Col>
-                    <Col span={4}></Col>
+                <Row justify={"center"}>
+                    <h3>{config.TITLE}</h3>
                 </Row>
                 <Menu mode="inline">
                     {state.user.menu.user_menu.map((item) => {
