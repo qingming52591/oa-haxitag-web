@@ -1,17 +1,6 @@
 import {Select, Space, Button, Form, Input, Row, Radio, message} from "antd";
 import {MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import React from 'react'
-import * as util from '../../util'
-
-const areas = [
-    {label: 'Beijing', value: 'Beijing'},
-    {label: 'Shanghai', value: 'Shanghai'},
-];
-
-const sights = {
-    Beijing: ['Tiananmen', 'Great Wall'],
-    Shanghai: ['Oriental Pearl', 'The Bund'],
-};
 
 const add_search_condition = (form, field, index, add, remove) => {
     return (

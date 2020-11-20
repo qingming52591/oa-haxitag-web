@@ -64,7 +64,7 @@ export const CrawlingTask = (props) => {
                         try_result: '可执行批量抓取',
                         daily_state: '未开始',
                         is_try: '否'
-                    },{
+                    }, {
                         topic: '医疗.医院',
                         topic_desc: '医院数据',
                         md5: '557c0c3f48f542aafd8cf8811690ca32',
@@ -84,59 +84,6 @@ export const CrawlingTask = (props) => {
                     }
                 }}
             />
-        </>
-    )
-}
-
-const EditTask = (props) => {
-    const [form] = Form.useForm()
-    form.setFieldsValue(props.initData)
-    return (
-        <>
-            <Modal key={Math.random()}
-                   title={'编辑App'}
-                   visible={props.show}
-                   okText={'保存'} cancelText={'取消'}
-                   onCancel={(e) => {
-                       props.setShow(false)
-                       form.resetFields()
-                   }}
-                   onOk={() => {
-                       form.validateFields()
-                           .then(async (values) => {
-                               if (!await event.app.saveApp(values)) {
-                                   message.error('保存失败')
-                                   return
-                               } else {
-                                   message.success('保存成功')
-                                   props.setShow(false)
-                                   form.resetFields()
-                               }
-                           })
-                   }}
-            >
-                <Form key={Math.random()} form={form}>
-                    <Form.Item label={'_id'} name={'_id'} hidden={true}>
-                        <Input/>
-                    </Form.Item>
-                    <Form.Item label={'名称'} name={'name'} rules={[
-                        {
-                            required: true,
-                            message: 'is required!',
-                        }
-                    ]}>
-                        <Input/>
-                    </Form.Item>
-                    <Form.Item label={'入口'} name={'enter'} rules={[
-                        {
-                            required: true,
-                            message: 'is required!',
-                        }
-                    ]}>
-                        <Input/>
-                    </Form.Item>
-                </Form>
-            </Modal>
         </>
     )
 }
