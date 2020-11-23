@@ -1,10 +1,12 @@
-import {Col, Row, Button, Form, Input, message, Modal, Table} from "antd";
+import {Col, Row, Button, Form, Input, message, Modal, Table, Tag, Upload} from "antd";
 import * as event from "../../event";
 import React from 'react'
+import {PlusOutlined, LoadingOutlined} from '@ant-design/icons';
 import {Link} from "react-router-dom";
 
 
 export const TopicManager = (props) => {
+    const [showModal, setShowModal] = React.useState(false)
     const columns = [
         {
             title: 'Topic名称',
@@ -50,7 +52,10 @@ export const TopicManager = (props) => {
         <>
             <Row justify="end">
                 <Col span={2}>
-                    <Button type={'primary'}>创建主题</Button>
+                    <EditTopicManager show={showModal} setShow={setShowModal}/>
+                    <Button type={'primary'} onClick={e => {
+                        setShowModal(true)
+                    }}>创建主题</Button>
                 </Col>
             </Row>
             <Table
@@ -148,7 +153,6 @@ export const TopicManager = (props) => {
                     },
                 ]}
                 size={'small'}
-                scroll={{y: 750}}
                 bordered
                 onRow={(record) => {
                     return {
@@ -157,6 +161,58 @@ export const TopicManager = (props) => {
                     }
                 }}
             />
+        </>
+    )
+}
+
+
+const EditTopicManager = (props) => {
+    const [form] = Form.useForm()
+    const [loading, setLoading] = React.useState(false)
+    const [imageUrl, setImageUrl] = React.useState()
+    const uploadButton = (
+        <div>
+            {loading ? <LoadingOutlined/> : <PlusOutlined/>}
+            <div style={{marginTop: 8}}>Upload</div>
+        </div>
+    );
+    return (
+        <>
+            <Modal
+                title={'编辑'}
+                visible={props.show}
+                okText={'保存'} cancelText={'取消'}
+                onCancel={(e) => {
+                    props.setShow(false)
+                    form.resetFields()
+                }}
+                onOk={() => {
+                    props.setShow(false)
+                }}
+            >
+                <Form form={form}>
+                    <Form.Item label={"Topic名称"}>
+                        <Input/>
+                    </Form.Item>
+                    <Form.Item label={"召回关键词"}>
+                        <Tag>
+                            <PlusOutlined/> New Tag
+                        </Tag>
+                    </Form.Item>
+                    <Form.Item label={"图片"}>
+                        <Upload
+                            name="avatar"
+                            listType="picture-card"
+                            className="avatar-uploader"
+                            showUploadList={false}
+                            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                        >
+                            {imageUrl ? <img src={imageUrl} alt="avatar" style={{width: '100%'}}/> : uploadButton}
+                        </Upload>
+                    </Form.Item>
+
+                </Form>
+            </Modal>
         </>
     )
 }
