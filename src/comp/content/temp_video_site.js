@@ -1,10 +1,25 @@
-import {Col, Row, Button, Form, Input, message, Modal, Table, Space, Avatar} from "antd";
+import {
+    Col,
+    Row,
+    Button,
+    Form,
+    Input,
+    DatePicker,
+    Modal,
+    Table,
+    Space,
+    Avatar,
+    Select,
+    Checkbox,
+    InputNumber
+} from "antd";
 import * as event from "../../event";
 import React from 'react'
 import {Link} from "react-router-dom";
 
 
 export const VideoSide = (props) => {
+    const [showModal, setShowModal] = React.useState(false)
     const columns = [
         {
             title: '头像',
@@ -51,7 +66,9 @@ export const VideoSide = (props) => {
             render: (text, record) => {
                 return (<>
                     <Space>
-                        <Link>编辑</Link>
+                        <Button type="link" onClick={e => {
+                            setShowModal(true)
+                        }}>编辑</Button>
                     </Space>
                 </>)
             }
@@ -60,7 +77,10 @@ export const VideoSide = (props) => {
     return (
         <>
             <Row justify="end">
-                <Button type={'primary'}>添加</Button>
+                <EditVideoSide show={showModal} setShow={setShowModal}></EditVideoSide>
+                <Button type={'primary'} onClick={e => {
+                    setShowModal(true)
+                }}>添加</Button>
             </Row>
             <Table
                 columns={columns}
@@ -178,15 +198,78 @@ export const VideoSide = (props) => {
 
                 ]}
                 size={'small'}
-                scroll={{y: 750}}
                 bordered
-                onRow={(record) => {
-                    return {
-                        onClick: (event) => {
-                        }
-                    }
-                }}
             />
+        </>
+    )
+}
+
+const EditVideoSide = (props) => {
+    const [form] = Form.useForm()
+    return (
+        <>
+            <Modal
+                title={'编辑'}
+                visible={props.show}
+                okText={'保存'} cancelText={'取消'}
+                onCancel={(e) => {
+                    props.setShow(false)
+                    form.resetFields()
+                }}
+                onOk={() => {
+                    props.setShow(false)
+                }}
+            >
+                <Form form={form}>
+                    <Form.Item label={"Url"}>
+                        <Input type={'url'}/>
+                    </Form.Item>
+                    <Form.Item label={"抓取频率"}>
+                        <Select>
+                            <Select.Option value={"1h"}>1h</Select.Option>
+                            <Select.Option value={"6h"}>6h</Select.Option>
+                            <Select.Option value={"12h"}>12h</Select.Option>
+                            <Select.Option value={"1d"}>1d</Select.Option>
+                            <Select.Option value={"2d"}>2d</Select.Option>
+                            <Select.Option value={"3d"}>3d</Select.Option>
+                            <Select.Option value={"7d"}>7d</Select.Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label={"分类"}>
+                        <Input/>
+                    </Form.Item>
+                    <Form.Item label={"语言"}>
+                        <Input/>
+                    </Form.Item>
+                    <Form.Item label={"时长"}>
+                        <Select>
+                            <Select.Option value={"≤5min"}>≤5min</Select.Option>
+                            <Select.Option value={"≤10min"}>≤10min</Select.Option>
+                            <Select.Option value={"≤20min"}>≤20min</Select.Option>
+                            <Select.Option value={"≤30min"}>≤30min</Select.Option>
+                            <Select.Option value={"≤60min"}>≤60min</Select.Option>
+                            <Select.Option value={"≤120min"}>≤120min</Select.Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label={"清晰度"}>
+                        <Checkbox.Group options={[
+                            {label: '1080P', value: '1080P'},
+                            {label: '720P', value: '720P'},
+                            {label: '480P', value: '480P'},
+                            {label: '360P', value: '360P'},
+                            {label: '240P', value: '240P'},
+                            {label: '144P', value: '144P'},
+                        ]}></Checkbox.Group>
+                    </Form.Item>
+                    <Form.Item label={"播放次数"}>
+                        <InputNumber min={1}/>
+                    </Form.Item>
+                    <Form.Item label={"上传日期"}>
+                        <DatePicker/>
+                    </Form.Item>
+
+                </Form>
+            </Modal>
         </>
     )
 }
