@@ -143,50 +143,48 @@ export const Search = (props) => {
                             )
                         }}
                     </Form.List>
-                    <Form.Item>
-                        <Input.Group compact>
-                            <Form.Item
-                                name={['key', 'time']}
-                            >
-                                <Select style={{width: 130}} placeholder={"时间"}>
-                                    {(['Last 72 hours', '7 days', '14 days', '30 days']).map(item => (
-                                        <Select.Option key={item} value={item}>
-                                            {item}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={['key', 'method']}
-                            >
-                                <Select style={{width: 130}} placeholder={"方法"}>
-                                    {(['Contains', 'Vector similarity']).map(item => (
-                                        <Select.Option key={item} value={item}>
-                                            {item}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                name={['key', 'sort_by']}
-                            >
-                                <Select style={{width: 130}} placeholder={"sort by"}>
-                                    {(['relevancy score', 'timeliness']).map(item => (
-                                        <Select.Option key={item} value={item}>
-                                            {item}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
 
-                        </Input.Group>
-                    </Form.Item>
+                    <Space>
+                        <Form.Item
+                            name={['key', 'time']}
+                        >
+                            <Select style={{width: 130}} placeholder={"时间"}>
+                                {(['Last 72 hours', '7 days', '14 days', '30 days']).map(item => (
+                                    <Select.Option key={item} value={item}>
+                                        {item}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            name={['key', 'method']}
+                        >
+                            <Select style={{width: 130}} placeholder={"方法"}>
+                                {(['Contains', 'Vector similarity']).map(item => (
+                                    <Select.Option key={item} value={item}>
+                                        {item}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            name={['key', 'sort_by']}
+                        >
+                            <Select style={{width: 130}} placeholder={"sort by"}>
+                                {(['relevancy score', 'timeliness']).map(item => (
+                                    <Select.Option key={item} value={item}>
+                                        {item}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                Search
+                            </Button>
+                        </Form.Item>
+                    </Space>
 
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                            Search
-                        </Button>
-                    </Form.Item>
                 </Form>
             </Row>
         </>
