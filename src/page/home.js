@@ -11,6 +11,7 @@ import {Route, Switch, Link} from "react-router-dom";
 import * as comps from '../comp/content'
 import * as g from '../g'
 import config from "../conf";
+import * as util from '../util'
 
 const {SubMenu} = Menu
 const {Header, Content, Sider, Footer} = Layout
@@ -102,6 +103,7 @@ const Home = (props) => {
                                         t = <Route/>
                                     }
                                 }
+                                util.log(t, true)
                                 return t
                             })}
                         </Switch>
