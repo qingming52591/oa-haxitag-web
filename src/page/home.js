@@ -103,7 +103,6 @@ const Home = (props) => {
                                         t = <Route/>
                                     }
                                 }
-                                util.log(t, true)
                                 return t
                             })}
                         </Switch>
