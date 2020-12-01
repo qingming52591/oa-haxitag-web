@@ -25,20 +25,23 @@ export const EditTakeNotes = (props) => {
     const [editor, setEditor] = React.useState(BraftEditor.createEditorState(''))
     return (
         <>
-            <BraftEditor style={{"background-color": "#fff", margin: 10}} value={editor}
-                         onChange={(editorState => {
-                             setEditor(editorState)
-                         })}
-            />
-            <Form form={form}>
-                <Form.Item>
-                    <Row justify="end">
-                        <Button type={"primary"} onClick={(e) => {
-                            util.goPage('/menu/take_notes')
-                        }}>保存</Button>
-                    </Row>
-                </Form.Item>
-            </Form>
+            <Row style={{"background-color": "#fff", margin: 10}}>
+                <Form form={form}>
+                    <Form.Item label={"笔记标题"} name={"title"}>
+                        <Input/>
+                    </Form.Item>
+                </Form>
+                <BraftEditor style={{"border-style": 'solid', "border-width": '1px'}} value={editor}
+                             onChange={(editorState => {
+                                 setEditor(editorState)
+                             })}
+                />
+                <Row justify="end">
+                    <Button type={"primary"} onClick={(e) => {
+                        util.goPage('/menu/take_notes')
+                    }}>保存</Button>
+                </Row>
+            </Row>
         </>
     )
 }
