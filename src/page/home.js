@@ -76,6 +76,8 @@ const Home = (props) => {
                 <Content style={{margin: '0 0px'}}>
                     <div className="site-layout-background" style={{padding: 1, minHeight: 360}}>
                         <Switch>
+                            <Route exact key={"write_note"} path={'/note/write'}
+                                   component={comps.default['EditTakeNotes']}/>
                             {state.user.menu.user_menu.map(item => {
                                 let t = item
                                 if (item.children.length > 0) {
