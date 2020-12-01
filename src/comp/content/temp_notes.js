@@ -41,6 +41,7 @@ export const TakeNotes = (props) => {
                     <Space>
                         <Button type="link" onClick={e => {
                             setShowModal(true)
+                            util.goPage('/note/write')
                         }}>编辑</Button>
                     </Space>
                 </>)
