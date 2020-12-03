@@ -160,7 +160,7 @@ const EditVideoUpload = (props) => {
                     <p className="ant-upload-drag-icon">
                         <InboxOutlined/>
                     </p>
-                    <p className="ant-upload-text">点击上传或拖拽文件上传</p>
+                    <p className="ant-upload-text">点击上传或拖拽视频文件上传</p>
                 </Upload.Dragger>
                 <Row>
                     <Col span={showVideo}>
