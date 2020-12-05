@@ -28,21 +28,7 @@ export const Knowledge = (props) => {
             title: '操作',
             key: 'action',
             render: (text, record) => {
-                if (record.state === g.menu_state.fixed) {
-                    return <Button danger disabled>删除</Button>
-                } else {
-                    return (
-                        <Popconfirm title="会同时清理相关联菜单、菜单组和用户权限，确认删除吗?"
-                                    cancelText={"取消"} okText={'确定'}
-                                    onCancel={(e) => e.stopPropagation()}
-                                    onConfirm={async (e) => {
-                                        e.stopPropagation()
-                                        await event.app.deleteApp(record._id)
-                                    }}>
-                            <Button danger onClick={(e) => e.stopPropagation()}>删除</Button>
-                        </Popconfirm>)
-                }
-
+                return <Button danger onClick={(e) => e.stopPropagation()}>删除</Button>
             }
         }
     ]
