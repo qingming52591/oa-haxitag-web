@@ -3,6 +3,8 @@ import {createBrowserHistory} from 'history';
 import {Input, Space, Button} from "antd";
 import {SearchOutlined} from '@ant-design/icons';
 
+const md5 = require('md5')
+
 export const history = createBrowserHistory()
 
 export const goPage = (path) => {
@@ -15,6 +17,15 @@ export const log = (msg, debug = false) => {
     }
 }
 
+export const getMd5 = (str) => {
+    return md5(str)
+}
+
+export const list2dict = (arr, key) => {
+
+}
+
+// 搜索
 export const getColSearchLocal = (title, dataIndex) => {
     return {
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (

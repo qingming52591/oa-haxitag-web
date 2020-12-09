@@ -22,6 +22,16 @@ export const menu_jump = {
     outer: 2
 }
 
+// 菜单组
+export const menu_group_type = {
+    menu: 0,
+    menu_group: 1
+}
+export const menu_group_type_desc = {
+    [menu_group_type.menu]: "菜单组",
+    [menu_group_type.menu_group]: "复合组"
+}
+
 // 错误码
 export const code = {
     success: 0,

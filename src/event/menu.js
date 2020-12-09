@@ -66,3 +66,38 @@ export const getMenu = async (user = false) => {
         }
     }
 }
+
+// 获取菜单组
+export const getMenuGroup = async () => {
+    const state = store.getState()
+    let r = await axios.get(`${config.API_OA_BASE}/v1/menu/group/list`, {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        store.dispatch({type: actions.setting.menu_group.UPDATE_MENU_GROUP, menu_group: data.data.menu_group})
+    }
+}
+
+// 创建、修改菜单组
+export const createMenuGroup = async (formData) => {
+    const state = store.getState()
+    let push_data = {...formData}
+    let r = await axios.post(`${config.API_OA_BASE}/v1/menu/group/save`, push_data, {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        await getMenuGroup()
+        return true
+    }
+}
+
+// 删除菜单组
+export const deleteMenuGroup = async (menu_group_id) => {
+    const state = store.getState()
+    let r = await axios.post(`${config.API_OA_BASE}/v1/menu/group/delete`, qs.stringify({menu_group_id}), {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        await getMenuGroup()
+        return true
+    }
+
+}
+
