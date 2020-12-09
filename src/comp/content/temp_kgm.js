@@ -22,9 +22,9 @@ import * as util from '../../util'
 import * as d3 from 'd3';
 
 
-const WIDTH = 900;
-const HEIGHT = 580;
-const R = 30;
+const WIDTH = 1000;
+const HEIGHT = 1200;
+const R = 10;
 
 export class KGManager extends React.Component {
     constructor(props) {
@@ -39,13 +39,58 @@ export class KGManager extends React.Component {
     print = () => {
         //初始化数据
         const nodeData = [
-            {id: 1, name: '感冒'},
-            {id: 2, name: '疟疾'},
-            {id: 3, name: '感冒'},
-            {id: 4, name: '咽痛寒热'},
-            {id: 5, name: '阴虚火旺，风邪外乘'},
-            {id: 6, name: '黑膏汤'},
-            {id: 7, name: '育阴之中，佐以解表'},
+            // root
+            {id: 1, name: '阅粒知识管理'},
+            // level1
+            {id: 2, name: '规章制度'},
+            {id: 3, name: '财务管理'},
+            {id: 4, name: '人力资源'},
+            {id: 5, name: '行政福利'},
+            {id: 6, name: '法律事务'},
+            {id: 7, name: '市场信息'},
+            {id: 8, name: '产品设计'},
+            {id: 9, name: '技术研发'},
+            // level2
+            {id: 10, name: '行政办公制度'},
+            {id: 11, name: '公章使用'},
+            {id: 12, name: '通行报销'},
+            {id: 13, name: '差旅费'},
+            {id: 14, name: '工资奖金发放'},
+            {id: 15, name: '项目及特殊奖励制度'},
+            {id: 16, name: '餐补助'},
+            {id: 17, name: '其他补助津贴'},
+            {id: 18, name: '招聘'},
+            {id: 19, name: '聘用合同'},
+            {id: 20, name: '面试及人才筛选'},
+            {id: 21, name: '面试指南'},
+            {id: 22, name: '笔试考题'},
+            {id: 23, name: '早餐'},
+            {id: 24, name: '下午茶'},
+            {id: 25, name: '餐补'},
+            {id: 26, name: '其他节假日津贴'},
+            {id: 27, name: '法务工作制度'},
+            {id: 28, name: '公司法务事物'},
+            {id: 29, name: '合同'},
+            {id: 30, name: '审计'},
+            {id: 31, name: '公关传播'},
+            {id: 32, name: '舆情口碑和市场反馈'},
+            {id: 33, name: '竞品、供应链'},
+            {id: 34, name: '政策和宏观经济分析'},
+            {id: 35, name: '定制主题数据分析'},
+            {id: 36, name: '阅粒知识计算引擎'},
+            {id: 37, name: '搜藏'},
+            {id: 38, name: '知识管理系统'},
+            {id: 39, name: '数据智能化RPA流程引擎'},
+            {id: 40, name: '算法'},
+            {id: 41, name: '后端工程'},
+            {id: 42, name: '产品工程'},
+            {id: 43, name: '产品项目'},
+            {id: 44, name: '数据服务'},
+            // level 3
+            {id: 45, name: '考勤'},
+            {id: 46, name: '办公设备'},
+            {id: 47, name: '办公用品'},
+            {id: 48, name: '候选人数据库'},
         ];
         let nodes = [];
         for (let i = 0; i < nodeData.length; i++) {
@@ -55,13 +100,57 @@ export class KGManager extends React.Component {
             });
         }
         const relData = [
-            {id: 1, source: 1, target: 2, tag: '影响2'},
-            {id: 2, source: 1, target: 3, tag: '影响3'},
-            {id: 3, source: 1, target: 4, tag: '影响4'},
-            {id: 4, source: 1, target: 5, tag: '影响5'},
-            {id: 5, source: 1, target: 6, tag: '影响6'},
-            {id: 6, source: 1, target: 7, tag: '影响7'},
+            {id: 1, source: 1, target: 2, tag: ''},
+            {id: 2, source: 1, target: 3, tag: ''},
+            {id: 3, source: 1, target: 4, tag: ''},
+            {id: 4, source: 1, target: 5, tag: ''},
+            {id: 5, source: 1, target: 6, tag: ''},
+            {id: 6, source: 1, target: 7, tag: ''},
+            {id: 7, source: 1, target: 8, tag: ''},
+            {id: 8, source: 1, target: 9, tag: ''},
+
+
+            {id: 9, source: 2, target: 10, tag: ''},
+            {id: 10, source: 2, target: 11, tag: ''},
+            {id: 11, source: 10, target: 45, tag: ''},
+            {id: 12, source: 10, target: 46, tag: ''},
+            {id: 13, source: 10, target: 47, tag: ''},
+            {id: 14, source: 3, target: 12, tag: ''},
+            {id: 15, source: 3, target: 13, tag: ''},
+            {id: 16, source: 3, target: 14, tag: ''},
+            {id: 17, source: 3, target: 15, tag: ''},
+            {id: 18, source: 3, target: 16, tag: ''},
+            {id: 19, source: 3, target: 17, tag: ''},
+            {id: 20, source: 4, target: 18, tag: ''},
+            {id: 21, source: 4, target: 19, tag: ''},
+            {id: 22, source: 4, target: 20, tag: ''},
+            {id: 23, source: 4, target: 21, tag: ''},
+            {id: 24, source: 4, target: 22, tag: ''},
+            {id: 25, source: 20, target: 48, tag: ''},
+            {id: 26, source: 5, target: 23, tag: ''},
+            {id: 27, source: 5, target: 24, tag: ''},
+            {id: 28, source: 5, target: 25, tag: ''},
+            {id: 29, source: 5, target: 26, tag: ''},
+            {id: 30, source: 6, target: 27, tag: ''},
+            {id: 31, source: 6, target: 28, tag: ''},
+            {id: 32, source: 6, target: 29, tag: ''},
+            {id: 33, source: 6, target: 30, tag: ''},
+            {id: 34, source: 7, target: 31, tag: ''},
+            {id: 35, source: 7, target: 32, tag: ''},
+            {id: 36, source: 7, target: 33, tag: ''},
+            {id: 37, source: 7, target: 34, tag: ''},
+            {id: 38, source: 7, target: 35, tag: ''},
+            {id: 39, source: 8, target: 36, tag: ''},
+            {id: 40, source: 8, target: 37, tag: ''},
+            {id: 41, source: 8, target: 38, tag: ''},
+            {id: 42, source: 8, target: 39, tag: ''},
+            {id: 43, source: 9, target: 40, tag: ''},
+            {id: 44, source: 9, target: 41, tag: ''},
+            {id: 45, source: 9, target: 42, tag: ''},
+            {id: 46, source: 9, target: 43, tag: ''},
+            {id: 47, source: 9, target: 44, tag: ''},
         ];
+
         let edges = [];
         for (let i = 0; i < relData.length; i++) {
             edges.push({
@@ -83,10 +172,10 @@ export class KGManager extends React.Component {
 
         //定义力模型
         const simulation = d3.forceSimulation(nodes) // 指定被引用的nodes数组
-            .force('link', d3.forceLink(edges).id(d => d.id).distance(150))
+            .force('link', d3.forceLink(edges).id(d => d.id).distance(80))
             .force('collision', d3.forceCollide(1).strength(0.1))
-            .force('center', d3.forceCenter(WIDTH / 2, HEIGHT / 2))
-            .force('charge', d3.forceManyBody().strength(-1000).distanceMax(800));
+            .force('center', d3.forceCenter(WIDTH / 2, HEIGHT / 2.5))
+            .force('charge', d3.forceManyBody().strength(-1000).distanceMax(300));
 
         //缩放
         function onZoomStart(d) {
