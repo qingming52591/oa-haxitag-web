@@ -98,6 +98,5 @@ export const deleteMenuGroup = async (menu_group_id) => {
         await getMenuGroup()
         return true
     }
-
 }
 

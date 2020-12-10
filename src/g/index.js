@@ -2,6 +2,16 @@
 export const user = {
     TOKEN: 'TOKEN', // 用户token
 }
+export const user_role = {
+    root: -1,
+    admin: 0,
+    normal: 1
+}
+export const user_role_desc = {
+    [user_role.root]: "超管",
+    [user_role.admin]: "管理员",
+    [user_role.normal]: "普通用户",
+}
 // 菜单
 export const menu = {
     MENU: 0, // 菜单类型
