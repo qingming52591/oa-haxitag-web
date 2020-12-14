@@ -4,12 +4,14 @@ import {actions, store} from "../store";
 import * as util from '../util'
 
 
-export const getHttpHeardData = (resp) => {
+export const getHttpHeardData = (resp, update_token = true) => {
     let result = {headers: null, data: null}
     if (resp.status === 200) {
         util.log(resp)
         if (resp.data.code === g.code.success) {
-            store.dispatch({type: actions.user.info.UPDATE_TOKEN, token: resp.headers.token})
+            if (update_token) {
+                store.dispatch({type: actions.user.info.UPDATE_TOKEN, token: resp.headers.token})
+            }
             result = {...result, ...{headers: resp.headers, data: resp.data}}
         } else if (resp.data.code === g.code.auth_error) {
             store.dispatch({type: actions.user.info.UPDATE_TOKEN, token: ''})
