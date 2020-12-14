@@ -270,9 +270,7 @@ export const Search = (props) => {
                 )
             })}
             <Row justify={'center'} style={{marginTop: "10px"}}>
-                {
-                    () => <Pagination defaultCurrent={6} total={500}/>
-                }
+                <Pagination defaultCurrent={6} total={500}/>
             </Row>
         </>
     )
