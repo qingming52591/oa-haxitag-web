@@ -56,7 +56,27 @@ export const VideoUpload = (props) => {
             render: (text, record) => {
                 return (<>
                     <Space>
-                        <Link type="link">结果展示</Link>
+                        <Button type="link" onClick={() => {
+                            Modal.info({
+                                title: record.video_name,
+                                content: (
+                                    <div>
+                                        <div>原视频:</div>
+                                        <video style={{width: "100%", height: "100%", "object-fit": "fill"}}
+                                               id={record.id} controls
+                                               src={record.origin}/>
+                                        <div>精彩片段:</div>
+                                        {record.result.map(item =>
+                                            <video style={{width: "100%", height: "100%", "object-fit": "fill"}}
+                                                   id={record.id} controls
+                                                   src={item}/>)}
+
+                                    </div>
+                                ),
+                                onOk() {
+                                },
+                            });
+                        }}>结果展示</Button>
                     </Space>
                 </>)
             }
@@ -78,6 +98,12 @@ export const VideoUpload = (props) => {
                         video_name: "《钢铁侠1》精彩片段",
                         time: "≤80min",
                         sharpness: "720P",
+                        origin: "http://sckm.vip/video/movies/1605582783897.mp4",
+                        result: ["http://sckm.vip/video/results/1605582783897/1605582783897_1799.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_2699.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_3599.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_5399.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_7499.mp4"],
                         status: 0
                     },
                     {
@@ -85,6 +111,12 @@ export const VideoUpload = (props) => {
                         video_name: "《古墓丽影》精彩片段",
                         time: "≤40min",
                         sharpness: "720P",
+                        origin: "http://sckm.vip/video/movies/1605582783897.mp4",
+                        result: ["http://sckm.vip/video/results/1605582783897/1605582783897_1799.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_2699.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_3599.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_5399.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_7499.mp4"],
                         status: 1
                     },
                     {
@@ -92,6 +124,12 @@ export const VideoUpload = (props) => {
                         video_name: "《超能骇客》精彩片段",
                         time: "≤70min",
                         sharpness: "1080P",
+                        origin: "http://sckm.vip/video/movies/1605582783897.mp4",
+                        result: ["http://sckm.vip/video/results/1605582783897/1605582783897_1799.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_2699.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_3599.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_5399.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_7499.mp4"],
                         status: 0
                     },
                     {
@@ -99,6 +137,12 @@ export const VideoUpload = (props) => {
                         video_name: "《机械公敌》精彩片段",
                         time: "≤30min",
                         sharpness: "720P",
+                        origin: "http://sckm.vip/video/movies/1605582783897.mp4",
+                        result: ["http://sckm.vip/video/results/1605582783897/1605582783897_1799.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_2699.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_3599.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_5399.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_7499.mp4"],
                         status: 1
                     },
                     {
@@ -106,6 +150,12 @@ export const VideoUpload = (props) => {
                         video_name: "《黑客帝国1》精彩片段",
                         time: "≤90min",
                         sharpness: "480P",
+                        origin: "http://sckm.vip/video/movies/1605582783897.mp4",
+                        result: ["http://sckm.vip/video/results/1605582783897/1605582783897_1799.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_2699.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_3599.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_5399.mp4",
+                            "http://sckm.vip/video/results/1605582783897/1605582783897_7499.mp4"],
                         status: 1
                     }
                 ]}
