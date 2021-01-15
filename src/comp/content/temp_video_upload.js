@@ -14,7 +14,8 @@ import {
     InputNumber,
     Upload,
     Divider,
-    message
+    message,
+    Tag
 } from "antd";
 import * as event from "../../event";
 import React from 'react'
@@ -42,6 +43,13 @@ export const VideoUpload = (props) => {
             dataIndex: 'name',
             key: 'name',
         }, {
+            title: '关键词',
+            dataIndex: 'keywords',
+            key: 'keywords',
+            render: (text, record) => {
+                return record.keywords.map(item => <Tag>{item}</Tag>)
+            }
+        }, {
             title: '时长',
             dataIndex: 'duration',
             key: 'duration',
@@ -49,6 +57,62 @@ export const VideoUpload = (props) => {
             title: '清晰度',
             dataIndex: 'sharpness',
             key: 'sharpness',
+        }, {
+            title: '关键帧',
+            dataIndex: 'keyframe',
+            key: 'keyframe',
+            render: (text, record) => {
+                if (record.status === g.video_status.success) {
+                    return <Button type="link" onClick={() => {
+                        Modal.info({
+                            title: record.video_name,
+                            content: (
+                                <div>
+                                    {record.keyframe.map(item =>
+                                        <img style={{
+                                            marginBottom: 10,
+                                            width: "100%",
+                                            height: "100%",
+                                            "object-fit": "fill"
+                                        }}
+                                             id={record.id} controls
+                                             src={`http://sckm.vip/video/${item}`}/>)}
+
+                                </div>
+                            ),
+                            onOk() {
+                            },
+                        });
+                    }}>查看关键帧</Button>
+                }
+            }
+        }, {
+            title: '声音分离',
+            dataIndex: 'keyframe',
+            key: 'keyframe',
+            render: (text, record) => {
+                if (record.status === g.video_status.success) {
+                    return <Button type="link" onClick={() => {
+                        Modal.info({
+                            title: record.video_name,
+                            content: (
+                                <div>
+                                    <div>人声</div>
+                                    <audio controls>
+                                        <source src={`http://sckm.vip/video/${record.human_audio}`}/>
+                                    </audio>
+                                    <div>背景声</div>
+                                    <audio controls>
+                                        <source src={`http://sckm.vip/video/${record.bg_audio}`}/>
+                                    </audio>
+                                </div>
+                            ),
+                            onOk() {
+                            },
+                        });
+                    }}>查看声音</Button>
+                }
+            }
         }, {
             title: '处理状态',
             dataIndex: 'status',
