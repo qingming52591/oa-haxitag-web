@@ -42,6 +42,18 @@ export const menu_group_type_desc = {
     [menu_group_type.menu_group]: "复合组"
 }
 
+// 视频
+export const video_status = {
+    fail: -1,
+    waiting: 0,
+    success: 1
+}
+export const video_status_desc = {
+    [video_status.fail]: "失败",
+    [video_status.waiting]: "处理中",
+    [video_status.success]: "成功"
+}
+
 // 错误码
 export const code = {
     success: 0,

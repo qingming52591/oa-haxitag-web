@@ -12,29 +12,39 @@ import {
     Select,
     Checkbox,
     InputNumber,
-    Upload
+    Upload,
+    Divider,
+    message
 } from "antd";
 import * as event from "../../event";
 import React from 'react'
 import {Link} from "react-router-dom";
 import {InboxOutlined} from '@ant-design/icons'
 import * as util from '../../util'
+import {store} from "../../store"
+import * as g from '../../g'
 
 export const VideoUpload = (props) => {
+    const state = store.useContext()
     const [showModal, setShowModal] = React.useState(false)
+    React.useEffect(() => {
+        (async () => {
+            await event.video.getVideo()
+        })()
+    }, [])
     const columns = [
         {
             title: '唯一标识',
-            dataIndex: 'id',
-            key: 'id'
+            dataIndex: '_id',
+            key: '_id'
         }, {
             title: '视频名称',
-            dataIndex: 'video_name',
-            key: 'video_name',
+            dataIndex: 'name',
+            key: 'name',
         }, {
             title: '时长',
-            dataIndex: 'time',
-            key: 'time',
+            dataIndex: 'duration',
+            key: 'duration',
         }, {
             title: '清晰度',
             dataIndex: 'sharpness',
@@ -44,10 +54,12 @@ export const VideoUpload = (props) => {
             dataIndex: 'status',
             key: 'status',
             render: (text, record) => {
-                if (record.status === 1)
-                    return "处理完成"
-                else {
-                    return "处理中"
+                if (record.status === g.video_status.success) {
+                    return g.video_status_desc[g.video_status.success]
+                } else if (record.status === g.video_status.waiting) {
+                    return g.video_status_desc[g.video_status.waiting]
+                } else {
+                    return g.video_status_desc[g.video_status.fail]
                 }
             }
         }, {
@@ -64,12 +76,12 @@ export const VideoUpload = (props) => {
                                         <div>原视频:</div>
                                         <video style={{width: "100%", height: "100%", "object-fit": "fill"}}
                                                id={record.id} controls
-                                               src={record.origin}/>
+                                               src={`http://sckm.vip/video/${record.origin}`}/>
                                         <div>精彩片段:</div>
-                                        {record.result.map(item =>
+                                        {record.video_clip.map(item =>
                                             <video style={{width: "100%", height: "100%", "object-fit": "fill"}}
                                                    id={record.id} controls
-                                                   src={item}/>)}
+                                                   src={`http://sckm.vip/video/${item}`}/>)}
 
                                     </div>
                                 ),
@@ -92,73 +104,7 @@ export const VideoUpload = (props) => {
             </Row>
             <Table
                 columns={columns}
-                dataSource={[
-                    {
-                        id: "1605760010680",
-                        video_name: "《钢铁侠1》精彩片段",
-                        time: "≤80min",
-                        sharpness: "720P",
-                        origin: "http://sckm.vip/video/movies/1605582783897.mp4",
-                        result: ["http://sckm.vip/video/results/1605582783897/1605582783897_1799.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_2699.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_3599.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_5399.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_7499.mp4"],
-                        status: 0
-                    },
-                    {
-                        id: "1605760012650",
-                        video_name: "《古墓丽影》精彩片段",
-                        time: "≤40min",
-                        sharpness: "720P",
-                        origin: "http://sckm.vip/video/movies/1605582783897.mp4",
-                        result: ["http://sckm.vip/video/results/1605582783897/1605582783897_1799.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_2699.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_3599.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_5399.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_7499.mp4"],
-                        status: 1
-                    },
-                    {
-                        id: "1605760020120",
-                        video_name: "《超能骇客》精彩片段",
-                        time: "≤70min",
-                        sharpness: "1080P",
-                        origin: "http://sckm.vip/video/movies/1605582783897.mp4",
-                        result: ["http://sckm.vip/video/results/1605582783897/1605582783897_1799.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_2699.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_3599.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_5399.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_7499.mp4"],
-                        status: 0
-                    },
-                    {
-                        id: "1605760020360",
-                        video_name: "《机械公敌》精彩片段",
-                        time: "≤30min",
-                        sharpness: "720P",
-                        origin: "http://sckm.vip/video/movies/1605582783897.mp4",
-                        result: ["http://sckm.vip/video/results/1605582783897/1605582783897_1799.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_2699.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_3599.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_5399.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_7499.mp4"],
-                        status: 1
-                    },
-                    {
-                        id: "1605760030650",
-                        video_name: "《黑客帝国1》精彩片段",
-                        time: "≤90min",
-                        sharpness: "480P",
-                        origin: "http://sckm.vip/video/movies/1605582783897.mp4",
-                        result: ["http://sckm.vip/video/results/1605582783897/1605582783897_1799.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_2699.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_3599.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_5399.mp4",
-                            "http://sckm.vip/video/results/1605582783897/1605582783897_7499.mp4"],
-                        status: 1
-                    }
-                ]}
+                dataSource={state.page.video.video}
                 size={'small'}
                 bordered
             />
@@ -169,8 +115,18 @@ export const VideoUpload = (props) => {
 const EditVideoUpload = (props) => {
     const [video, setVideo] = React.useState('')
     const [showVideo, setShowVideo] = React.useState(0)
+    const [submitData, setSubmitData = new FormData()] = React.useState({
+        name: null,
+        video: null
+    })
 
     function getBase64(file, callback) {
+        const reader = new FileReader();
+        reader.addEventListener('load', () => callback(reader.result));
+        reader.readAsDataURL(file);
+    }
+
+    const getBlob = (file, callback) => {
         const reader = new FileReader();
         reader.addEventListener('load', () => callback(reader.result));
         reader.readAsDataURL(file);
@@ -187,25 +143,41 @@ const EditVideoUpload = (props) => {
                     setShowVideo(0)
                     setVideo('')
                 }}
-                onOk={() => {
+                onOk={async () => {
+                    if (!submitData.name) {
+                        message.error('请填写视频名称')
+                        return false
+                    }
+                    if (!submitData.video) {
+                        message.error("请选择上传视频")
+                        return false
+                    }
+                    let formData = new FormData()
+                    formData.append('name', submitData.name)
+                    formData.append('video', submitData.video)
+                    await event.video.saveVideo(formData)
                     props.setShow(false)
                     setShowVideo(0)
                     setVideo('')
                 }}
             >
-                <Upload.Dragger
-                    multiple={false}
-                    beforeUpload={file => {
-                        // util.log(file.slice())
-                        getBase64(file, fileObj => {
-                            setVideo(fileObj)
-                            setShowVideo(24)
-                        })
-                    }}
-                    onRemove={file => {
-                        setShowVideo(0)
-                        setVideo('')
-                    }}
+                视频名称: <Input value={submitData.name} onChange={(e) => {
+                setSubmitData({...submitData, ...{name: e.target.value}})
+            }}/>
+                <Divider/>
+                <Upload.Dragger accept={"video/mp4"}
+                                multiple={false}
+                                beforeUpload={file => {
+                                    setSubmitData({...submitData, ...{video: file}})
+                                    getBase64(file, fileObj => {
+                                        setVideo(fileObj)
+                                        setShowVideo(24)
+                                    })
+                                }}
+                                onRemove={file => {
+                                    setShowVideo(0)
+                                    setVideo('')
+                                }}
                 >
                     <p className="ant-upload-drag-icon">
                         <InboxOutlined/>
