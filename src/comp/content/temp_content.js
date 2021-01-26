@@ -15,16 +15,152 @@ import {
     Upload,
     Collapse,
     Divider,
-    Tabs
+    Tabs, message
 } from "antd";
 import * as event from "../../event";
 import React from 'react'
 import {Link} from "react-router-dom";
 import {InboxOutlined, PlusOutlined} from '@ant-design/icons'
 import * as util from '../../util'
+import * as g from '../../g'
 import test_img from '../../imgs/7777.png'
+import {store} from "../../store";
+import {re} from '../../util/re'
+
+function getBase64(file, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(file);
+}
+
+const AddContent = ({type}) => {
+    const refUrl = React.useRef(null)
+    const [docs, setDocs] = React.useState([])
+    const [imgs, setImgs] = React.useState([])
+    const [audios, setAudios] = React.useState([])
+    if (type === g.content_type.url) {
+        return <div>
+            <Input ref={refUrl} type={'url'}/>
+            <Button style={{marginTop: 10}} onClick={async (e) => {
+                if (!re.url(refUrl.current.state.value)) {
+                    message.error('请输入正确的url')
+                }
+                if (await event.content.saveContent(type, refUrl.current.state.value)) {
+                    refUrl.current.setState({...refUrl.current.state, ...{value: ''}})
+                }
+            }}>完成</Button>
+        </div>
+    } else if (type === g.content_type.docs) {
+        return <div>
+            <Upload
+                // multiple
+                accept=".doc,.pdf"
+                listType="picture-card"
+                fileList={docs}
+                onPreview={(file) => {
+                }}
+                onChange={({fileList}) => {
+                    if (fileList.length <= 5) {
+                        setDocs([...fileList])
+                    } else {
+                        message.error('文件数量不可大于5个')
+                    }
+                }}
+                onRemove={(file) => {
+                }}
+            >
+                {docs.length >= 5 ? null : <PlusOutlined/>}
+            </Upload>
+            <Button style={{marginTop: 10}} onClick={async (e) => {
+                if (docs.length <= 0) {
+                    message.error('文件不可为空')
+                    return false
+                }
+                let waits = docs.map((item) => {
+                    return event.content.saveContent(item.originFileObj.type.split('/').pop(), item.originFileObj)
+                })
+                await Promise.all(waits)
+                message.success('上传成功')
+                setDocs([])
+            }}>完成</Button>
+        </div>
+    } else if (type === g.content_type.img) {
+        return <div>
+            <Upload
+                // multiple
+                accept=".png"
+                listType="picture-card"
+                fileList={imgs}
+                onPreview={(file) => {
+                }}
+                onChange={({fileList}) => {
+                    if (fileList.length <= 5) {
+                        setImgs([...fileList])
+                    } else {
+                        message.error('文件数量不可大于5个')
+                    }
+                }}
+                onRemove={(file) => {
+                }}
+            >
+                {docs.length >= 5 ? null : <PlusOutlined/>}
+            </Upload>
+            <Button style={{marginTop: 10}} onClick={async (e) => {
+                if (imgs.length <= 0) {
+                    message.error('文件不可为空')
+                    return false
+                }
+                let waits = imgs.map((item) => {
+                    return event.content.saveContent(type, item.originFileObj)
+                })
+                await Promise.all(waits)
+                message.success('上传成功')
+                setImgs([])
+            }}>完成</Button>
+        </div>
+    } else if (type === g.content_type.audio) {
+        return <div>
+            <Upload
+                // multiple
+                accept=".mp3"
+                listType="picture-card"
+                fileList={audios}
+                onPreview={(file) => {
+                }}
+                onChange={({fileList}) => {
+                    if (fileList.length <= 5) {
+                        setAudios([...fileList])
+                    } else {
+                        message.error('文件数量不可大于5个')
+                    }
+                }}
+                onRemove={(file) => {
+                }}
+            >
+                {audios.length >= 5 ? null : <PlusOutlined/>}
+            </Upload>
+            <Button style={{marginTop: 10}} onClick={async (e) => {
+                if (audios.length <= 0) {
+                    message.error('文件不可为空')
+                    return false
+                }
+                let waits = audios.map((item) => {
+                    return event.content.saveContent(type, item.originFileObj)
+                })
+                await Promise.all(waits)
+                message.success('上传成功')
+                setAudios([])
+            }}>完成</Button>
+        </div>
+    } else if (type === g.content_type.video) {
+        util.goPage('/menu/video')
+    } else {
+        return <div>Hello World</div>
+    }
+}
 
 export const Content = (props) => {
+    const state = store.useContext();
     const [imgs, setImags] = React.useState({
         previewVisible: false,
         previewImage: '',
@@ -33,6 +169,12 @@ export const Content = (props) => {
         panelKey: [],
         viewResult: false
     })
+
+    React.useEffect(() => {
+        (async () => {
+            await event.content.getContent()
+        })()
+    }, [])
     const uploadButton = (
         <div>
             <PlusOutlined/>
@@ -40,27 +182,41 @@ export const Content = (props) => {
         </div>
     );
 
-    function getBase64(file, callback) {
-        const reader = new FileReader();
-        reader.addEventListener('load', () => callback(reader.result));
-        reader.readAsDataURL(file);
-    }
-
     const columns = [
         {
             title: '唯一标识',
-            dataIndex: 'id',
-            key: 'id'
+            dataIndex: '_id',
+            key: '_id',
+            render: (text, record) => {
+                return <a target={'blank'} href={record.path}>{record._id}</a>
+            }
         }, {
             title: '处理状态',
-            dataIndex: 'status',
-            key: 'status',
+            dataIndex: 'result',
+            key: 'result',
             render: (text, record) => {
-                if (record.status === 1)
-                    return "处理完成"
-                else {
-                    return "处理中"
-                }
+                return g.contents_result_desc[record.result]
+            }
+        }, {
+            title: '标题',
+            dataIndex: 'title',
+            key: 'title',
+            render: (text, record) => {
+                return record.title
+            }
+        }, {
+            title: '摘要',
+            dataIndex: 'yl_summary',
+            key: 'yl_summary',
+            render: (text, record) => {
+                return record.yl_summary.slice(0, 40)
+            }
+        }, {
+            title: '文件类型',
+            dataIndex: 'type',
+            key: 'type',
+            render: (text, record) => {
+                return g.content_type_desc[record.type]
             }
         }, {
             title: '操作',
@@ -68,32 +224,9 @@ export const Content = (props) => {
             render: (text, record) => {
                 return (
                     <>
-                        <Button type="link" disabled={record.status ? false : true}
+                        <Button type="link" disabled={record.result ? true : false}
                                 onClick={(e) => setImags({...imgs, ...{viewResult: true}})}>结果展示</Button>
                         <Button type="link">删除</Button>
-                        <Modal
-                            visible={imgs.viewResult}
-                            title={"结果展示"}
-                            footer={null}
-                            onCancel={() => setImags({...imgs, ...{viewResult: false}})}
-                            width={1000}
-                        >
-                            <Space direction={"vertical"}>
-                                <img style={{width: '100%'}}
-                                     src={test_img}/>
-                                <Divider type={"horizontal"}/>
-                                <div>
-                                    从20121年Google的图像识别错误率明显下降，机器在图像识别方面接近人类水平；到2016年AlphaGo战胜了人类围棋冠军；
-                                    再到2017 年AlphaZero战胜了AlphaGo，已经DeepMind去尝试星际争霸游戏，这一系列AI发展的标志性事件让我们看到了人工智能技术
-                                    帮助人类社会发展若干问题的希望。我们已经见证的这一系列人工智能技术的发展，本质上是受益于大数据给人工智能带来的数据红利。
-                                    这一波人工智能潮实在大数据所给予的海量标注样本以及超强计算机能力这两个强大的支撑作用下所形成的。
-                                    可以说，这一波人工智能本质上是大数据喂养出来的。到了今天，可以很自豪地宣布机器智能再感知智能和计算智能等若干具体问题上已经达到甚至
-                                    超越人类水平。现在，在语音识别与合成、图像识别、封闭环境有限规则的游戏领域等问题上，机器智能水平堪比、甚至超越人类水平。
-                                </div>
-                            </Space>
-
-
-                        </Modal>
                     </>
                 )
             }
@@ -107,125 +240,22 @@ export const Content = (props) => {
                 <Collapse.Panel collapsible={'disabled'} showArrow={false} header="添加内容" key={'1'}>
                     <Tabs defaultActiveKey="1" onChange={() => {
                     }}>
-                        <Tabs.TabPane tab="图片" key="1">
-                            <Upload
-                                listType="picture-card"
-                                fileList={imgs.fileList}
-                                multiple={true}
-                                onPreview={file => {
-                                    util.log(file)
-                                    setImags({...imgs, ...{previewVisible: true, previewImage: file.url}})
-                                }}
-                                beforeUpload={file => {
-                                    getBase64(file, fileObj => {
-                                        let t_imgs = {...imgs}
-                                        t_imgs.fileList.push({
-                                            uid: t_imgs.fileList.length,
-                                            name: 'image.png',
-                                            status: 'done',
-                                            url: fileObj,
-                                        })
-                                        setImags(t_imgs)
-                                    })
-                                }}
-                                onRemove={(file) => {
-                                    setImags({...imgs, ...{fileList: imgs.fileList.filter(({uid}) => uid !== file.uid)}})
-                                }}
-                            >
-                                {imgs.fileList.length >= 8 ? null : uploadButton}
-                            </Upload>
+                        <Tabs.TabPane tab="网页" key={g.content_type.url}>
+                            <AddContent type={g.content_type.url}/>
                         </Tabs.TabPane>
-                        <Tabs.TabPane tab="文档(.pdf .doc)" key="2">
-                            <Upload
-                                listType="picture-card"
-                                fileList={imgs.fileList}
-                                multiple={true}
-                                onPreview={file => {
-                                    util.log(file)
-                                    setImags({...imgs, ...{previewVisible: true, previewImage: file.url}})
-                                }}
-                                beforeUpload={file => {
-                                    getBase64(file, fileObj => {
-                                        let t_imgs = {...imgs}
-                                        t_imgs.fileList.push({
-                                            uid: t_imgs.fileList.length,
-                                            name: 'image.png',
-                                            status: 'done',
-                                            url: fileObj,
-                                        })
-                                        setImags(t_imgs)
-                                    })
-                                }}
-                                onRemove={(file) => {
-                                    setImags({...imgs, ...{fileList: imgs.fileList.filter(({uid}) => uid !== file.uid)}})
-                                }}
-                            >
-                                {imgs.fileList.length >= 8 ? null : uploadButton}
-                            </Upload>
+                        <Tabs.TabPane tab="文档(.pdf .doc)" key={g.content_type.docs}>
+                            <AddContent type={g.content_type.docs}/>
                         </Tabs.TabPane>
-                        <Tabs.TabPane tab="网页" key="3">
-                            <Form.Item label={'网页地址'}><Input type={'url'}/></Form.Item>
+                        <Tabs.TabPane tab="图片" key={g.content_type.img}>
+                            <AddContent type={g.content_type.img}/>
                         </Tabs.TabPane>
-                        <Tabs.TabPane tab="视频" key="4">
-                            <Upload
-                                listType="picture-card"
-                                fileList={imgs.fileList}
-                                multiple={true}
-                                onPreview={file => {
-                                    util.log(file)
-                                    setImags({...imgs, ...{previewVisible: true, previewImage: file.url}})
-                                }}
-                                beforeUpload={file => {
-                                    getBase64(file, fileObj => {
-                                        let t_imgs = {...imgs}
-                                        t_imgs.fileList.push({
-                                            uid: t_imgs.fileList.length,
-                                            name: 'image.png',
-                                            status: 'done',
-                                            url: fileObj,
-                                        })
-                                        setImags(t_imgs)
-                                    })
-                                }}
-                                onRemove={(file) => {
-                                    setImags({...imgs, ...{fileList: imgs.fileList.filter(({uid}) => uid !== file.uid)}})
-                                }}
-                            >
-                                {imgs.fileList.length >= 8 ? null : uploadButton}
-                            </Upload>
+                        <Tabs.TabPane tab="音频" key={g.content_type.audio}>
+                            <AddContent type={g.content_type.audio}/>
                         </Tabs.TabPane>
-                        <Tabs.TabPane tab="音频" key="5">
-                            <Upload
-                                listType="picture-card"
-                                fileList={imgs.fileList}
-                                multiple={true}
-                                onPreview={file => {
-                                    util.log(file)
-                                    setImags({...imgs, ...{previewVisible: true, previewImage: file.url}})
-                                }}
-                                beforeUpload={file => {
-                                    getBase64(file, fileObj => {
-                                        let t_imgs = {...imgs}
-                                        t_imgs.fileList.push({
-                                            uid: t_imgs.fileList.length,
-                                            name: 'image.png',
-                                            status: 'done',
-                                            url: fileObj,
-                                        })
-                                        setImags(t_imgs)
-                                    })
-                                }}
-                                onRemove={(file) => {
-                                    setImags({...imgs, ...{fileList: imgs.fileList.filter(({uid}) => uid !== file.uid)}})
-                                }}
-                            >
-                                {imgs.fileList.length >= 8 ? null : uploadButton}
-                            </Upload>
+                        <Tabs.TabPane tab="视频" key={g.content_type.video}>
+                            <AddContent type={g.content_type.video}/>
                         </Tabs.TabPane>
                     </Tabs>
-                    <Button onClick={(e) => {
-                        setImags({...imgs, ...{panelKey: [], fileList: []}})
-                    }}>完成</Button>
                     <Modal
                         visible={imgs.previewVisible}
                         title={"图片预览"}
@@ -238,28 +268,8 @@ export const Content = (props) => {
             </Collapse>
             <Table
                 columns={columns}
-                dataSource={[
-                    {
-                        id: "1605760010680",
-                        status: 0
-                    },
-                    {
-                        id: "1605760012650",
-                        status: 1
-                    },
-                    {
-                        id: "1605760020120",
-                        status: 0
-                    },
-                    {
-                        id: "1605760020360",
-                        status: 1
-                    },
-                    {
-                        id: "1605760030650",
-                        status: 1
-                    }
-                ]}
+                dataSource={state.user.content.contents}
+                pagination={{pageSize: 50}}
                 size={'small'}
                 bordered
             />

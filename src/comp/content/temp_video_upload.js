@@ -170,6 +170,7 @@ export const VideoUpload = (props) => {
                 columns={columns}
                 dataSource={state.page.video.video}
                 size={'small'}
+                pagination={{pageSize: 50}}
                 bordered
             />
         </>
