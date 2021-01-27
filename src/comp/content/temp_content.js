@@ -15,7 +15,7 @@ import {
     Upload,
     Collapse,
     Divider,
-    Tabs, message
+    Tabs, message, Tag
 } from "antd";
 import * as event from "../../event";
 import React from 'react'
@@ -169,6 +169,7 @@ export const Content = (props) => {
         panelKey: [],
         viewResult: false
     })
+    const [showResult, setShowResult] = React.useState({show: false, data: {}})
 
     React.useEffect(() => {
         (async () => {
@@ -189,6 +190,13 @@ export const Content = (props) => {
             key: '_id',
             render: (text, record) => {
                 return <a target={'blank'} href={record.path}>{record._id}</a>
+            }
+        }, {
+            title: '文件类型',
+            dataIndex: 'type',
+            key: 'type',
+            render: (text, record) => {
+                return g.content_type_desc[record.type]
             }
         }, {
             title: '处理状态',
@@ -212,20 +220,18 @@ export const Content = (props) => {
                 return record.yl_summary.slice(0, 40)
             }
         }, {
-            title: '文件类型',
-            dataIndex: 'type',
-            key: 'type',
-            render: (text, record) => {
-                return g.content_type_desc[record.type]
-            }
-        }, {
             title: '操作',
             key: 'action',
             render: (text, record) => {
                 return (
                     <>
                         <Button type="link" disabled={record.result ? true : false}
-                                onClick={(e) => setImags({...imgs, ...{viewResult: true}})}>结果展示</Button>
+                                onClick={(e) => setShowResult({
+                                    ...showResult, ...{
+                                        show: true,
+                                        data: record
+                                    }
+                                })}>结果展示</Button>
                         <Button type="link">删除</Button>
                     </>
                 )
@@ -234,6 +240,40 @@ export const Content = (props) => {
     ]
     return (
         <>
+            <Modal title={'查看结果'} visible={showResult.show}
+                   onOk={() => setShowResult({...showResult, ...{show: false}})}
+                   onCancel={() => setShowResult({...showResult, ...{show: false}})}
+                   footer={null}
+                   width={'75%'}
+            >
+                <Row>
+                    <Col span={16}>
+                        {showResult.data.content}
+                    </Col>
+                    <Col span={8} style={{paddingLeft: 10}}>
+                        <Divider orientation={'left'}>分类</Divider>
+                        {(() => {
+                            if (showResult.data.bilstm_category) {
+                                return showResult.data.bilstm_category.map(item => <Tag>{item.tag}</Tag>)
+                            }
+                        })()}
+                        <Divider orientation={'left'}>实体</Divider>
+                        {(() => {
+                            if (showResult.data.bilstm_category) {
+                                return showResult.data.bilstm_entity.map(item => <Tag>{item.tag}</Tag>)
+                            }
+                        })()}
+                        <Divider orientation={'left'}>标签</Divider>
+                        {(() => {
+                            if (showResult.data.bilstm_category) {
+                                return showResult.data.bilstm_label.map(item => <Tag>{item.tag}</Tag>)
+                            }
+                        })()}
+                        <Divider orientation={'left'}>摘要</Divider>
+                        {showResult.data.yl_summary}
+                    </Col>
+                </Row>
+            </Modal>
             <Collapse onChange={(d) => {
                 setImags({...imgs, ...{panelKey: d}})
             }} activeKey={imgs.panelKey} style={{margin: "10px 0px"}}>
