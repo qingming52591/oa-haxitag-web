@@ -15,7 +15,7 @@ import {
     Upload,
     Collapse,
     Divider,
-    Tabs, message, Tag
+    Tabs, message, Tag, Popconfirm, Popover
 } from "antd";
 import * as event from "../../event";
 import React from 'react'
@@ -31,6 +31,54 @@ function getBase64(file, callback) {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result));
     reader.readAsDataURL(file);
+}
+
+const SaveTag = ({key, keyWord, item, setData, onClose, opt, is_new = false}) => {
+    const [show, setShow] = React.useState(false)
+    console.log(keyWord)
+    return <Popover
+        placement="top"
+        trigger={'click'}
+        visible={show}
+        content={() => {
+            let data = {
+                is_new: is_new,
+                tag: '',
+                score: 0.0,
+                key: keyWord,
+                opt: opt
+            }
+            if (!is_new) {
+                data = {
+                    is_new: is_new,
+                    tag: item.tag,
+                    score: item.score,
+                    key: keyWord,
+                    opt: opt
+                }
+            }
+            return <Space direction={'vertical'} size={'small'} align={'start'}>
+                tag: <Input defaultValue={data.tag}
+                            onChange={e => data.tag = e.target.value} size={'small'}/>
+                score: <InputNumber defaultValue={data.score}
+                                    onChange={n => data.score = parseFloat(n)} min={0}
+                                    size={'small'} step={0.01} precision={2}
+                                    style={{width: '100%'}}/>
+                <Button onClick={() => {
+                    setData(data)
+                    setShow(false)
+                }}>保存</Button>
+            </Space>
+        }}
+        destroyTooltipOnHide={true}
+        onVisibleChange={e => setShow(e)}
+        onClick={e => setShow(true)}
+    >
+        {is_new ? <Tag>New</Tag> : <Tag key={key} closable onClose={e => {
+            if (onClose) onClose(item)
+            setShow(false)
+        }}>{item.tag}</Tag>}
+    </Popover>
 }
 
 const AddContent = ({type}) => {
@@ -169,7 +217,19 @@ export const Content = (props) => {
         panelKey: [],
         viewResult: false
     })
-    const [showResult, setShowResult] = React.useState({show: false, data: {}})
+    const [showResult, setShowResult] = React.useState(false)
+    const [edit, setEdit] = React.useState(
+        {
+            title_edit: false,
+            summary_edit: false,
+            type_new: false,
+            type_edit: null,
+            entity_new: false,
+            entity_edit: null,
+            label_new: false,
+            label_edit: null,
+            data: {}
+        })
 
     React.useEffect(() => {
         (async () => {
@@ -182,6 +242,64 @@ export const Content = (props) => {
             <div style={{marginTop: 8}}>上传</div>
         </div>
     );
+
+    const saveData = (data) => {
+        let new_data = []
+        let key = ''
+        if (data.opt === 'type') {
+            new_data = [...edit.data.bilstm_category]
+            key = 'bilstm_category'
+        } else if (data.opt === 'entity') {
+            new_data = [...edit.data.bilstm_entity]
+            key = 'bilstm_entity'
+        } else if (data.opt === 'label') {
+            new_data = [...edit.data.bilstm_label]
+            key = 'bilstm_label'
+        } else {
+            return
+        }
+        if (data.is_new) {
+            new_data.push({
+                tag: data.tag,
+                score: data.score,
+                state: 0
+            })
+        } else {
+            console.log(data)
+            new_data = new_data.map(item => item.tag === data.key ? {
+                tag: data.tag,
+                score: data.score,
+                state: 0
+            } : item)
+        }
+        setEdit({
+            ...edit, ...{
+                data: {...edit.data, ...{[key]: new_data}}
+            }
+        })
+    }
+    const onClose = (data) => {
+        let new_data = []
+        let key = ''
+        if (data.opt === 'type') {
+            new_data = edit.data.bilstm_category.filter(item => item.tag !== data.tag)
+            key = 'bilstm_category'
+        } else if (data.opt === 'entity') {
+            new_data = edit.data.bilstm_entity.filter(item => item.tag !== data.tag)
+            key = 'bilstm_entity'
+        } else if (data.opt === 'label') {
+            new_data = edit.data.bilstm_label.filter(item => item.tag !== data.tag)
+            key = 'bilstm_label'
+        } else {
+            return
+        }
+        let new_category =
+            setEdit({
+                ...edit, ...{
+                    data: {...edit.data, ...{[key]: new_data}}
+                }
+            })
+    }
 
     const columns = [
         {
@@ -226,12 +344,14 @@ export const Content = (props) => {
                 return (
                     <>
                         <Button type="link" disabled={record.result ? true : false}
-                                onClick={(e) => setShowResult({
-                                    ...showResult, ...{
-                                        show: true,
-                                        data: record
-                                    }
-                                })}>结果展示</Button>
+                                onClick={(e) => {
+                                    setEdit({
+                                        ...edit, ...{
+                                            data: {...record}
+                                        }
+                                    })
+                                    setShowResult(true)
+                                }}>结果展示</Button>
                         <Button type="link">删除</Button>
                     </>
                 )
@@ -240,37 +360,96 @@ export const Content = (props) => {
     ]
     return (
         <>
-            <Modal title={'查看结果'} visible={showResult.show}
-                   onOk={() => setShowResult({...showResult, ...{show: false}})}
-                   onCancel={() => setShowResult({...showResult, ...{show: false}})}
+            <Modal title={'查看结果'} visible={showResult}
+                   onOk={() => setShowResult(false)}
+                   onCancel={() => setShowResult(false)}
                    footer={null}
                    width={'75%'}
             >
                 <Row>
                     <Col span={16}>
-                        {showResult.data.content}
+                        {edit.data.content}
                     </Col>
                     <Col span={8} style={{paddingLeft: 10}}>
+                        <Divider orientation={'left'}>标题</Divider>
+                        <span onDoubleClick={(e) => {
+                            setEdit({...edit, ...{title_edit: true}})
+                        }}>
+                            {(() => {
+                                if (edit.title_edit) {
+                                    return <Input
+                                        ref={input => input ? input.focus() : null}
+                                        value={edit.data.title}
+                                        onChange={(e) => {
+                                            setEdit({
+                                                ...edit, ...{
+                                                    data: {...edit.data, ...{title: e.target.value}}
+                                                }
+                                            })
+                                        }}
+                                        onPressEnter={e => setEdit({...edit, ...{title_edit: false}})}
+                                        onBlur={e => setEdit({...edit, ...{title_edit: false}})}
+                                    ></Input>
+                                } else {
+                                    return edit.data.title
+                                }
+                            })()}
+                        </span>
+                        <Divider orientation={'left'}>摘要</Divider>
+                        <span onDoubleClick={(e) => {
+                            setEdit({...edit, ...{summary_edit: true}})
+                        }}>
+                            {(() => {
+                                if (edit.summary_edit) {
+                                    return <Input.TextArea
+                                        rows={10}
+                                        ref={input => input ? input.focus() : null}
+                                        value={edit.data.yl_summary}
+                                        onChange={(e) => {
+                                            setEdit({
+                                                ...edit, ...{
+                                                    data: {...edit.data, ...{yl_summary: e.target.value}}
+                                                }
+                                            })
+                                        }}
+                                        onPressEnter={e => setEdit({...edit, ...{summary_edit: false}})}
+                                        onBlur={e => setEdit({...edit, ...{summary_edit: false}})}
+                                    ></Input.TextArea>
+                                } else {
+                                    return edit.data.yl_summary
+                                }
+                            })()}
+                        </span>
                         <Divider orientation={'left'}>分类</Divider>
                         {(() => {
-                            if (showResult.data.bilstm_category) {
-                                return showResult.data.bilstm_category.map(item => <Tag>{item.tag}</Tag>)
+                            if (edit.data.bilstm_category) {
+                                return edit.data.bilstm_category.map((item, index) => {
+                                    return <SaveTag key={item.tag} keyWord={item.tag} item={item} setData={saveData}
+                                                    onClose={onClose} opt={'type'}/>
+                                })
                             }
                         })()}
+                        <SaveTag is_new={true} setData={saveData} opt={'type'}/>
                         <Divider orientation={'left'}>实体</Divider>
                         {(() => {
-                            if (showResult.data.bilstm_category) {
-                                return showResult.data.bilstm_entity.map(item => <Tag>{item.tag}</Tag>)
+                            if (edit.data.bilstm_entity) {
+                                return edit.data.bilstm_entity.map((item, index) => {
+                                    return <SaveTag key={item.tag} keyWord={item.tag} item={item} setData={saveData}
+                                                    onClose={onClose} opt={'entity'}/>
+                                })
                             }
                         })()}
+                        <SaveTag is_new={true} setData={saveData} opt={'entity'}/>
                         <Divider orientation={'left'}>标签</Divider>
                         {(() => {
-                            if (showResult.data.bilstm_category) {
-                                return showResult.data.bilstm_label.map(item => <Tag>{item.tag}</Tag>)
+                            if (edit.data.bilstm_label) {
+                                return edit.data.bilstm_label.map((item, index) => {
+                                    return <SaveTag key={item.tag} keyWord={item.tag} item={item} setData={saveData}
+                                                    onClose={onClose} opt={'label'}/>
+                                })
                             }
                         })()}
-                        <Divider orientation={'left'}>摘要</Divider>
-                        {showResult.data.yl_summary}
+                        <SaveTag is_new={true} setData={saveData} opt={'label'}/>
                     </Col>
                 </Row>
             </Modal>
