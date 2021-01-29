@@ -33,28 +33,29 @@ function getBase64(file, callback) {
     reader.readAsDataURL(file);
 }
 
-const SaveTag = ({key, keyWord, item, setData, onClose, opt, is_new = false}) => {
+const SaveTag = ({key, keyWord, _id, item, setData, onClose, opt, is_new = false}) => {
     const [show, setShow] = React.useState(false)
-    console.log(keyWord)
+    let data = {
+        is_new: is_new,
+        tag: '',
+        score: 0.0,
+        key: keyWord,
+        opt: opt,
+        _id: _id
+    }
     return <Popover
         placement="top"
         trigger={'click'}
         visible={show}
         content={() => {
-            let data = {
-                is_new: is_new,
-                tag: '',
-                score: 0.0,
-                key: keyWord,
-                opt: opt
-            }
             if (!is_new) {
                 data = {
                     is_new: is_new,
                     tag: item.tag,
                     score: item.score,
                     key: keyWord,
-                    opt: opt
+                    opt: opt,
+                    _id: _id
                 }
             }
             return <Space direction={'vertical'} size={'small'} align={'start'}>
@@ -75,7 +76,7 @@ const SaveTag = ({key, keyWord, item, setData, onClose, opt, is_new = false}) =>
         onClick={e => setShow(true)}
     >
         {is_new ? <Tag>New</Tag> : <Tag key={key} closable onClose={e => {
-            if (onClose) onClose(item)
+            if (onClose) onClose(data)
             setShow(false)
         }}>{item.tag}</Tag>}
     </Popover>
@@ -243,7 +244,7 @@ export const Content = (props) => {
         </div>
     );
 
-    const saveData = (data) => {
+    const saveData = async (data) => {
         let new_data = []
         let key = ''
         if (data.opt === 'type') {
@@ -265,12 +266,15 @@ export const Content = (props) => {
                 state: 0
             })
         } else {
-            console.log(data)
             new_data = new_data.map(item => item.tag === data.key ? {
                 tag: data.tag,
                 score: data.score,
                 state: 0
             } : item)
+        }
+        if (!await event.content.updateContent(data._id, key, new_data)) {
+            message.error('修改失败')
+            return false
         }
         setEdit({
             ...edit, ...{
@@ -278,7 +282,7 @@ export const Content = (props) => {
             }
         })
     }
-    const onClose = (data) => {
+    const onClose = async (data) => {
         let new_data = []
         let key = ''
         if (data.opt === 'type') {
@@ -292,6 +296,10 @@ export const Content = (props) => {
             key = 'bilstm_label'
         } else {
             return
+        }
+        if (!await event.content.updateContent(data._id, key, new_data)) {
+            message.error('修改失败')
+            return false
         }
         let new_category =
             setEdit({
@@ -387,8 +395,21 @@ export const Content = (props) => {
                                                 }
                                             })
                                         }}
-                                        onPressEnter={e => setEdit({...edit, ...{title_edit: false}})}
-                                        onBlur={e => setEdit({...edit, ...{title_edit: false}})}
+                                        onPressEnter={async (e) => {
+                                            if (!await event.content.updateContent(edit.data._id, 'title', edit.data.title)) {
+                                                message.error('修改失败')
+                                                return false
+                                            }
+                                            setEdit({...edit, ...{title_edit: false}})
+                                        }}
+                                        onBlur={async e => {
+                                            if (!await event.content.updateContent(edit.data._id, 'title', edit.data.title)) {
+                                                message.error('修改失败')
+                                                return false
+                                            }
+                                            setEdit({...edit, ...{title_edit: false}})
+                                        }
+                                        }
                                     ></Input>
                                 } else {
                                     return edit.data.title
@@ -412,8 +433,22 @@ export const Content = (props) => {
                                                 }
                                             })
                                         }}
-                                        onPressEnter={e => setEdit({...edit, ...{summary_edit: false}})}
-                                        onBlur={e => setEdit({...edit, ...{summary_edit: false}})}
+                                        onPressEnter={async e => {
+                                            if (!await event.content.updateContent(edit.data._id, 'yl_summary', edit.data.yl_summary)) {
+                                                message.error('修改失败')
+                                                return false
+                                            }
+                                            setEdit({...edit, ...{summary_edit: false}})
+                                        }
+                                        }
+                                        onBlur={async e => {
+                                            if (!await event.content.updateContent(edit.data._id, 'yl_summary', edit.data.yl_summary)) {
+                                                message.error('修改失败')
+                                                return false
+                                            }
+                                            setEdit({...edit, ...{summary_edit: false}})
+                                        }
+                                        }
                                     ></Input.TextArea>
                                 } else {
                                     return edit.data.yl_summary
@@ -424,32 +459,35 @@ export const Content = (props) => {
                         {(() => {
                             if (edit.data.bilstm_category) {
                                 return edit.data.bilstm_category.map((item, index) => {
-                                    return <SaveTag key={item.tag} keyWord={item.tag} item={item} setData={saveData}
+                                    return <SaveTag _id={edit.data._id} key={item.tag} keyWord={item.tag} item={item}
+                                                    setData={saveData}
                                                     onClose={onClose} opt={'type'}/>
                                 })
                             }
                         })()}
-                        <SaveTag is_new={true} setData={saveData} opt={'type'}/>
+                        <SaveTag _id={edit.data._id} is_new={true} setData={saveData} opt={'type'}/>
                         <Divider orientation={'left'}>实体</Divider>
                         {(() => {
                             if (edit.data.bilstm_entity) {
                                 return edit.data.bilstm_entity.map((item, index) => {
-                                    return <SaveTag key={item.tag} keyWord={item.tag} item={item} setData={saveData}
+                                    return <SaveTag _id={edit.data._id} key={item.tag} keyWord={item.tag} item={item}
+                                                    setData={saveData}
                                                     onClose={onClose} opt={'entity'}/>
                                 })
                             }
                         })()}
-                        <SaveTag is_new={true} setData={saveData} opt={'entity'}/>
+                        <SaveTag _id={edit.data._id} is_new={true} setData={saveData} opt={'entity'}/>
                         <Divider orientation={'left'}>标签</Divider>
                         {(() => {
                             if (edit.data.bilstm_label) {
                                 return edit.data.bilstm_label.map((item, index) => {
-                                    return <SaveTag key={item.tag} keyWord={item.tag} item={item} setData={saveData}
+                                    return <SaveTag _id={edit.data._id} key={item.tag} keyWord={item.tag} item={item}
+                                                    setData={saveData}
                                                     onClose={onClose} opt={'label'}/>
                                 })
                             }
                         })()}
-                        <SaveTag is_new={true} setData={saveData} opt={'label'}/>
+                        <SaveTag _id={edit.data._id} is_new={true} setData={saveData} opt={'label'}/>
                     </Col>
                 </Row>
             </Modal>

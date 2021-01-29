@@ -39,13 +39,18 @@ export const saveContent = async (type, _data) => {
 
 }
 
-// 按id获取对应content
-export const getContentById = async (app_id) => {
+// 更新content字段对应的值
+export const updateContent = async (_id, fields, value) => {
     const state = store.getState()
-    let r = await axios.get(`${config.API_OA_BASE}/v1/app/${app_id}`, {headers: {token: state.user.info.token}})
+    let r = await axios.post(`${config.API_OA_BASE}/v1/contents/update`, {
+        _id,
+        fields,
+        data: value
+    }, {headers: {token: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
-        return data.data
+        store.dispatch({type: actions.user.content.UPDATE_FIELDS, _id: _id, fields, data: value})
+        return true
     }
 }
 
