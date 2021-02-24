@@ -232,9 +232,17 @@ export const Content = (props) => {
             data: {}
         })
 
+    const [table, setTable] = React.useState({
+        pagination: {current: 1, pageSize: 60, total: 0},
+        loading: false
+    })
+
     React.useEffect(() => {
         (async () => {
-            await event.content.getContent()
+            let pagination = await event.content.getContent(table.pagination)
+            if (pagination) {
+                setTable({...table, ...{pagination: pagination}})
+            }
         })()
     }, [])
     const uploadButton = (
@@ -314,6 +322,7 @@ export const Content = (props) => {
             title: '唯一标识',
             dataIndex: '_id',
             key: '_id',
+            ellipsis: true,
             render: (text, record) => {
                 return <a target={'blank'} href={record.path}>{record._id}</a>
             }
@@ -335,6 +344,8 @@ export const Content = (props) => {
             title: '标题',
             dataIndex: 'title',
             key: 'title',
+            ellipsis: true,
+            // width: 200,
             render: (text, record) => {
                 return record.title
             }
@@ -526,7 +537,14 @@ export const Content = (props) => {
             <Table
                 columns={columns}
                 dataSource={state.user.content.contents}
-                pagination={{pageSize: 50}}
+                pagination={table.pagination}
+                onChange={async (param) => {
+                    console.log(param)
+                    let pagination = await event.content.getContent(param)
+                    if (pagination) {
+                        setTable({...table, ...{pagination: pagination}})
+                    }
+                }}
                 size={'small'}
                 bordered
             />
