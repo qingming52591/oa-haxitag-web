@@ -112,7 +112,6 @@ export const Menu = (props) => {
                             sort: 0,
                         })
                         setShowModal(true)
-                        console.log(modalInit)
                     }}>创建菜单</Button>
                 </Col>
             </Row>

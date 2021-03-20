@@ -5,6 +5,7 @@ import * as app from './app'
 import * as search from './search'
 import * as video from './video'
 import * as content from './content'
+import * as siteSpider from './site_spider'
 
 export {
     home,
@@ -13,5 +14,6 @@ export {
     app,
     search,
     video,
-    content
+    content,
+    siteSpider
 }
