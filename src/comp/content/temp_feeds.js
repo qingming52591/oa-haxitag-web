@@ -5,9 +5,20 @@ import {Link} from "react-router-dom";
 import {MessageOutlined, LikeOutlined, StarOutlined, TagOutlined} from '@ant-design/icons'
 import zongjingban from '../../imgs/zongjingban.png'
 import hr from '../../imgs/hr.jpeg'
+import {store} from "../../store";
 
 
 export const Feeds = (props) => {
+    const state = store.useContext();
+    const [pagination, setPagination] = React.useState({current: 1, pageSize: 10, total: 0})
+    React.useEffect(() => {
+        (async () => {
+            let pp = await event.content.getContent(pagination)
+            if (pp) {
+                setPagination(pp)
+            }
+        })()
+    }, [])
     const listData = [
         {
             href: 'https://www.yueli.com',
@@ -46,21 +57,31 @@ export const Feeds = (props) => {
             {text}
         </Space>
     )
-    const getImg = (come_from) => {
-        if (come_from === 'HR') {
+    const getImg = (record) => {
+        if (record.type === 'img') {
             return <img
-                width={200}
+                width={150}
+                height={150}
                 alt="logo"
-                src={hr}
-            />
-        } else if (come_from === '总经办') {
-            return <img
-                width={200}
-                alt="logo"
-                src={zongjingban}
+                src={record.path}
             />
         }
     }
+    // const getImg = (come_from) => {
+    //     if (come_from === 'HR') {
+    //         return <img
+    //             width={200}
+    //             alt="logo"
+    //             src={hr}
+    //         />
+    //     } else if (come_from === '总经办') {
+    //         return <img
+    //             width={200}
+    //             alt="logo"
+    //             src={zongjingban}
+    //         />
+    //     }
+    // }
     return (<>
         <List
             itemLayout="vertical"
@@ -69,11 +90,17 @@ export const Feeds = (props) => {
             split={true}
             pagination={{
                 onChange: page => {
-                    console.log(page);
+                    (async () => {
+                        let pp = await event.content.getContent({...pagination, ...{current: page}})
+                        if (pp) {
+                            setPagination(pp)
+                        }
+                    })()
                 },
-                pageSize: 5,
-            }}
-            dataSource={listData}
+                ...pagination
+            }
+            }
+            dataSource={state.user.content.contents}
             renderItem={item => (
                 <List.Item
                     key={item.title}
@@ -83,14 +110,13 @@ export const Feeds = (props) => {
                         <IconText icon={LikeOutlined} text="156" key="3"/>,
                         <IconText icon={MessageOutlined} text="2" key="4"/>,
                     ]}
-                    extra={getImg(item.come_from)}
+                    extra={getImg(item)}
                 >
                     <List.Item.Meta
                         // avatar={<Avatar src={item.avatar}/>}
-                        title={<a target={"_blank"} href={item.href}>{item.title}</a>}
-                        description={item.description}
+                        title={<a target={"_blank"} href={item.path}>{item.title}</a>}
                     />
-                    {item.content}
+                    {item.yl_summary}
                 </List.Item>
             )}
         />
