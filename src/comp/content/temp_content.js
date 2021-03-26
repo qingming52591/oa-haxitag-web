@@ -233,7 +233,7 @@ export const Content = (props) => {
         })
 
     const [table, setTable] = React.useState({
-        pagination: {current: 1, pageSize: 60, total: 0},
+        pagination: {current: 1, pageSize: 15, total: 0},
         loading: false
     })
 
