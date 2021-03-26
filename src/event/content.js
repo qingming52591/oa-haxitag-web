@@ -55,3 +55,14 @@ export const updateContent = async (_id, fields, value) => {
     }
 }
 
+// 删除
+export const deleteContent = async (_id, pagination) => {
+    const state = store.getState()
+    let r = await axios.post(`${config.API_OA_BASE}/v1/contents/delete?_id=${_id}`, {}, {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        await getContent(pagination)
+        return true
+    }
+}
+

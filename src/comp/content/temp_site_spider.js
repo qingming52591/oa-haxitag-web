@@ -36,7 +36,7 @@ const EditSiteSpider = (props) => {
     return (
         <>
             <Modal
-                title={'编辑菜单'}
+                title={'编辑站点'}
                 visible={props.show}
                 okText={'保存'} cancelText={'取消'}
                 onCancel={(e) => {
@@ -209,7 +209,7 @@ export const SiteSpider = (props) => {
                         weight: 0
                     })
                     setShowModal(true)
-                }}>创建菜单</Button>
+                }}>创建站点</Button>
             </Row>
             <Table
                 columns={columns}

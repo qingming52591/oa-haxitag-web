@@ -371,7 +371,9 @@ export const Content = (props) => {
                                     })
                                     setShowResult(true)
                                 }}>结果展示</Button>
-                        <Button type="link">删除</Button>
+                        <Button type="link" onClick={async () => {
+                            await event.content.deleteContent(record._id, table.pagination)
+                        }}>删除</Button>
                     </>
                 )
             }
