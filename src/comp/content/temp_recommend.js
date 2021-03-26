@@ -5,9 +5,20 @@ import {Link} from "react-router-dom";
 import {MessageOutlined, LikeOutlined, StarOutlined, TagOutlined} from '@ant-design/icons'
 import zongjingban from '../../imgs/zongjingban.png'
 import hr from '../../imgs/hr.jpeg'
+import {store} from "../../store";
 
 
 export const Recommend = (props) => {
+    const state = store.useContext();
+    const [pagination, setPagination] = React.useState({current: 1, pageSize: 10, total: 0})
+    React.useEffect(() => {
+        (async () => {
+            let pp = await event.recommend.getRecommend(pagination)
+            if (pp) {
+                setPagination(pp)
+            }
+        })()
+    }, [])
     const listData = [
         {
             href: 'https://www.yueli.com',
@@ -69,11 +80,18 @@ export const Recommend = (props) => {
             split={true}
             pagination={{
                 onChange: page => {
-                    console.log(page);
+                    (async () => {
+                        let pp = await event.recommend.getRecommend({...pagination, ...{current: page}})
+                        if (pp) {
+                            setPagination(pp)
+                        }
+                    })()
                 },
-                pageSize: 5,
+                ...pagination
             }}
-            dataSource={listData}
+            dataSource={(() => {
+                return state.user.recommend.recommend
+            })()}
             renderItem={item => (
                 <List.Item
                     key={item.title}
@@ -86,11 +104,9 @@ export const Recommend = (props) => {
                     extra={getImg(item.come_from)}
                 >
                     <List.Item.Meta
-                        // avatar={<Avatar src={item.avatar}/>}
-                        title={<a target={"_blank"} href={item.href}>{item.title}</a>}
-                        description={item.description}
+                        title={<a target={"_blank"} href={item.url}>{item.title}</a>}
                     />
-                    {item.content}
+                    {item.summary}
                 </List.Item>
             )}
         />
