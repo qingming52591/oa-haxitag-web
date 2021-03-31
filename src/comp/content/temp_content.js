@@ -15,7 +15,7 @@ import {
     Upload,
     Collapse,
     Divider,
-    Tabs, message, Tag, Popconfirm, Popover
+    Tabs, message, Tag, Popconfirm, Popover, Radio
 } from "antd";
 import * as event from "../../event";
 import React from 'react'
@@ -75,7 +75,7 @@ const SaveTag = ({key, keyWord, _id, item, setData, onClose, opt, is_new = false
         onVisibleChange={e => setShow(e)}
         onClick={e => setShow(true)}
     >
-        {is_new ? <Tag>New</Tag> : <Tag key={key} closable onClose={e => {
+        {is_new ? <Tag>+</Tag> : <Tag key={key} closable onClose={e => {
             if (onClose) onClose(data)
             setShow(false)
         }}>{item.tag}</Tag>}
@@ -218,6 +218,15 @@ export const Content = (props) => {
         panelKey: [],
         viewResult: false
     })
+    const [popEdit, setPopEdit] = React.useState({
+        offsetX: 0,
+        offsetY: 0,
+        show: false,
+        trigger: false,
+        tag: '',
+        type: 'entity',
+        score: 1
+    })
     const [showResult, setShowResult] = React.useState(false)
     const [edit, setEdit] = React.useState(
         {
@@ -289,6 +298,7 @@ export const Content = (props) => {
                 data: {...edit.data, ...{[key]: new_data}}
             }
         })
+        return true
     }
     const onClose = async (data) => {
         let new_data = []
@@ -390,85 +400,166 @@ export const Content = (props) => {
             >
                 <Row>
                     <Col span={16}>
-                        {edit.data.content}
+                        <Popover
+                            trigger={'click'}
+                            visible={popEdit.show}
+                            placement="right"
+                            align={{
+                                offset: [popEdit.offsetX, popEdit.offsetY],
+                            }}
+                            onVisibleChange={(visible) => {
+                                if (!visible && !popEdit.trigger) setPopEdit({...popEdit, ...{show: visible}})
+                            }}
+                            content={() => {
+                                return <Space direction={'vertical'} size={'small'} align={'start'}>
+                                    tag: <Input disabled={true} value={popEdit.tag}
+                                                onChange={e => setPopEdit({...popEdit, ...{tag: e.target.value}})}
+                                                size={'small'}/>
+                                    类型: <Radio.Group
+                                    value={popEdit.type}
+                                    options={[
+                                        {label: '实体', value: 'entity'},
+                                        {label: '标签', value: 'label'},
+                                        {label: '分类', value: 'category'}
+                                    ]}
+                                    onChange={(e) => setPopEdit({...popEdit, ...{type: e.target.value}})}
+                                    optionType="button"
+                                    buttonStyle="solid"
+                                />
+                                    score: <InputNumber value={popEdit.score}
+                                                        onChange={e => setPopEdit({...popEdit, ...{score: parseFloat(e.target.value)}})}
+                                                        min={0}
+                                                        size={'small'} step={0.01} precision={2}
+                                                        style={{width: '100%'}}/>
+                                    <Button onClick={async () => {
+                                        if (!await saveData({
+                                            is_new: true,
+                                            tag: popEdit.tag,
+                                            score: popEdit.score,
+                                            key: popEdit.tag,
+                                            opt: popEdit.type,
+                                            _id: edit.data._id
+                                        })) {
+                                            return
+                                        }
+                                        setPopEdit({...popEdit, ...{trigger: false, show: false}})
+                                        message.success('成功')
+                                    }}>保存</Button>
+                                </Space>
+                            }}
+                        >
+                            <div
+                                style={{position: "relative"}}
+                                onMouseUp={(e) => {
+                                    let selected = window.getSelection().toString()
+                                    if (selected.length > 0) {
+                                        let target = e.target
+                                        let top = target.offsetTop
+                                        let left = target.offsetLeft
+                                        let current = target.offsetParent
+                                        let target_origin_x = -target.offsetWidth
+                                        let target_origin_y = -target.offsetHeight / 2
+                                        while (current !== null) {
+                                            left += current.offsetLeft
+                                            top += current.offsetTop
+                                            current = current.offsetParent;
+                                        }
+                                        console.log(target_origin_x, target_origin_y)
+                                        setPopEdit({
+                                            ...popEdit, ...{
+                                                offsetX: e.nativeEvent.offsetX + target_origin_x,
+                                                offsetY: e.nativeEvent.offsetY + target_origin_y,
+                                                show: true,
+                                                trigger: true,
+                                                tag: selected
+                                            }
+                                        })
+                                    } else {
+                                        setPopEdit({...popEdit, ...{trigger: false, tag: ''}})
+                                        e.stopPropagation()
+                                    }
+                                }}>
+                                {edit.data.content}
+                            </div>
+                        </Popover>
                     </Col>
                     <Col span={8} style={{paddingLeft: 10}}>
                         <Divider orientation={'left'}>标题</Divider>
                         <span onDoubleClick={(e) => {
                             setEdit({...edit, ...{title_edit: true}})
                         }}>
-                            {(() => {
-                                if (edit.title_edit) {
-                                    return <Input
-                                        ref={input => input ? input.focus() : null}
-                                        value={edit.data.title}
-                                        onChange={(e) => {
-                                            setEdit({
-                                                ...edit, ...{
-                                                    data: {...edit.data, ...{title: e.target.value}}
+                                    {(() => {
+                                        if (edit.title_edit) {
+                                            return <Input
+                                                ref={input => input ? input.focus() : null}
+                                                value={edit.data.title}
+                                                onChange={(e) => {
+                                                    setEdit({
+                                                        ...edit, ...{
+                                                            data: {...edit.data, ...{title: e.target.value}}
+                                                        }
+                                                    })
+                                                }}
+                                                onPressEnter={async (e) => {
+                                                    if (!await event.content.updateContent(edit.data._id, 'title', edit.data.title)) {
+                                                        message.error('修改失败')
+                                                        return false
+                                                    }
+                                                    setEdit({...edit, ...{title_edit: false}})
+                                                }}
+                                                onBlur={async e => {
+                                                    if (!await event.content.updateContent(edit.data._id, 'title', edit.data.title)) {
+                                                        message.error('修改失败')
+                                                        return false
+                                                    }
+                                                    setEdit({...edit, ...{title_edit: false}})
                                                 }
-                                            })
-                                        }}
-                                        onPressEnter={async (e) => {
-                                            if (!await event.content.updateContent(edit.data._id, 'title', edit.data.title)) {
-                                                message.error('修改失败')
-                                                return false
-                                            }
-                                            setEdit({...edit, ...{title_edit: false}})
-                                        }}
-                                        onBlur={async e => {
-                                            if (!await event.content.updateContent(edit.data._id, 'title', edit.data.title)) {
-                                                message.error('修改失败')
-                                                return false
-                                            }
-                                            setEdit({...edit, ...{title_edit: false}})
+                                                }
+                                            ></Input>
+                                        } else {
+                                            return edit.data.title
                                         }
-                                        }
-                                    ></Input>
-                                } else {
-                                    return edit.data.title
-                                }
-                            })()}
-                        </span>
+                                    })()}
+                                    </span>
                         <Divider orientation={'left'}>摘要</Divider>
                         <span onDoubleClick={(e) => {
                             setEdit({...edit, ...{summary_edit: true}})
                         }}>
-                            {(() => {
-                                if (edit.summary_edit) {
-                                    return <Input.TextArea
-                                        rows={10}
-                                        ref={input => input ? input.focus() : null}
-                                        value={edit.data.yl_summary}
-                                        onChange={(e) => {
-                                            setEdit({
-                                                ...edit, ...{
-                                                    data: {...edit.data, ...{yl_summary: e.target.value}}
+                                    {(() => {
+                                        if (edit.summary_edit) {
+                                            return <Input.TextArea
+                                                rows={10}
+                                                ref={input => input ? input.focus() : null}
+                                                value={edit.data.yl_summary}
+                                                onChange={(e) => {
+                                                    setEdit({
+                                                        ...edit, ...{
+                                                            data: {...edit.data, ...{yl_summary: e.target.value}}
+                                                        }
+                                                    })
+                                                }}
+                                                onPressEnter={async e => {
+                                                    if (!await event.content.updateContent(edit.data._id, 'yl_summary', edit.data.yl_summary)) {
+                                                        message.error('修改失败')
+                                                        return false
+                                                    }
+                                                    setEdit({...edit, ...{summary_edit: false}})
                                                 }
-                                            })
-                                        }}
-                                        onPressEnter={async e => {
-                                            if (!await event.content.updateContent(edit.data._id, 'yl_summary', edit.data.yl_summary)) {
-                                                message.error('修改失败')
-                                                return false
-                                            }
-                                            setEdit({...edit, ...{summary_edit: false}})
+                                                }
+                                                onBlur={async e => {
+                                                    if (!await event.content.updateContent(edit.data._id, 'yl_summary', edit.data.yl_summary)) {
+                                                        message.error('修改失败')
+                                                        return false
+                                                    }
+                                                    setEdit({...edit, ...{summary_edit: false}})
+                                                }
+                                                }
+                                            ></Input.TextArea>
+                                        } else {
+                                            return edit.data.yl_summary
                                         }
-                                        }
-                                        onBlur={async e => {
-                                            if (!await event.content.updateContent(edit.data._id, 'yl_summary', edit.data.yl_summary)) {
-                                                message.error('修改失败')
-                                                return false
-                                            }
-                                            setEdit({...edit, ...{summary_edit: false}})
-                                        }
-                                        }
-                                    ></Input.TextArea>
-                                } else {
-                                    return edit.data.yl_summary
-                                }
-                            })()}
-                        </span>
+                                    })()}
+                                    </span>
                         <Divider orientation={'left'}>分类</Divider>
                         {(() => {
                             if (edit.data.bilstm_category) {
