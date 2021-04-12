@@ -469,8 +469,9 @@ const EditMenuGroup = (props) => {
                                                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                             }
                                         >
-                                            {member.map((item) => <Select.Option key={item._id}
-                                                                                 value={item._id}>{item.name}</Select.Option>)}
+                                            {member.filter(item => item.type === g.menu.MENU_ITEM).map((item) =>
+                                                <Select.Option key={item._id}
+                                                               value={item._id}>{item.name}</Select.Option>)}
                                         </Select>
                                     </Form.Item>
                                 )
