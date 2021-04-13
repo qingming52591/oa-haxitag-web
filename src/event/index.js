@@ -7,6 +7,7 @@ import * as video from './video'
 import * as content from './content'
 import * as recommend from './recommend'
 import * as siteSpider from './site_spider'
+import * as topic from './topic'
 
 export {
     home,
@@ -17,5 +18,6 @@ export {
     video,
     content,
     recommend,
-    siteSpider
+    siteSpider,
+    topic
 }

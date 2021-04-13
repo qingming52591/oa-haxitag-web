@@ -20,11 +20,13 @@ export const getContent = async (pagination) => {
 }
 
 // 保存content
-export const saveContent = async (type, _data) => {
+export const saveContent = async (type, _data, topic = null, pagination = null) => {
     const state = store.getState()
     let formData = new FormData()
     formData.append('type', type)
     formData.append('data', _data)
+    formData.append('topic', topic)
+
 
     let r = await axios.post(`${config.API_OA_BASE}/v1/contents/save`, formData, {
         headers: {
@@ -34,10 +36,11 @@ export const saveContent = async (type, _data) => {
     })
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
-        await getContent()
+        if (pagination) {
+            await getContent(pagination)
+        }
         return true
     }
-
 }
 
 // 更新content字段对应的值
