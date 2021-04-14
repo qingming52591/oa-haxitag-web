@@ -216,7 +216,7 @@ export const Content = (props) => {
         add_content = props.add_content
     }
     let topic = ''
-    if (props.topic.length > 0) {
+    if (props.topic !== undefined && props.topic.length > 0) {
         topic = props.topic
     }
     const state = store.useContext();
