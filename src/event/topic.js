@@ -31,12 +31,28 @@ export const saveTopic = async (formData, pagination) => {
     }
 }
 
-export const getTopic = async (pagination) => {
+export const getTopic = async (pagination, all = false) => {
     const state = store.getState()
-    let r = await axios.get(`${config.API_OA_BASE}/v1/topic/list?page_num=${pagination.current}&page_size=${pagination.pageSize}`, {headers: {token: state.user.info.token}})
+    let r = {}
+    if (all) {
+        r = await axios.get(`${config.API_OA_BASE}/v1/topic/list?page_num=${pagination.current}&page_size=${pagination.pageSize}&all=1`, {headers: {token: state.user.info.token}})
+    } else {
+        r = await axios.get(`${config.API_OA_BASE}/v1/topic/list?page_num=${pagination.current}&page_size=${pagination.pageSize}`, {headers: {token: state.user.info.token}})
+    }
+
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         store.dispatch({type: actions.topic.topic.UPDATE_TOPIC, topic: data.data.topics})
+        return {current: data.data.page_num, pageSize: data.data.page_size, total: data.data.total}
+    }
+}
+
+export const getTopicContent = async (topic_id, pagination) => {
+    const state = store.getState()
+    let r = await axios.get(`${config.API_OA_BASE}/v1/topic/content?page_num=${pagination.current}&page_size=${pagination.pageSize}&topic_id=${topic_id}`, {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        store.dispatch({type: actions.user.content.UPDATE_CONTENTS, contents: data.data.contents})
         return {current: data.data.page_num, pageSize: data.data.page_size, total: data.data.total}
     }
 }

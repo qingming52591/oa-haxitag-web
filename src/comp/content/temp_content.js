@@ -209,6 +209,16 @@ const AddContent = ({type}) => {
 }
 
 export const Content = (props) => {
+    let add_content = false
+    if (props.add_content === undefined) {
+        add_content = true
+    } else {
+        add_content = props.add_content
+    }
+    let topic = ''
+    if (props.topic.length > 0) {
+        topic = props.topic
+    }
     const state = store.useContext();
     const [imgs, setImags] = React.useState({
         previewVisible: false,
@@ -248,7 +258,7 @@ export const Content = (props) => {
 
     React.useEffect(() => {
         (async () => {
-            let pagination = await event.content.getContent(table.pagination)
+            let pagination = await event.content.getContent(table.pagination, topic)
             if (pagination) {
                 setTable({...table, ...{pagination: pagination}})
             }
@@ -596,7 +606,7 @@ export const Content = (props) => {
                     </Col>
                 </Row>
             </Modal>
-            <Collapse onChange={(d) => {
+            {add_content ? <Collapse onChange={(d) => {
                 setImags({...imgs, ...{panelKey: d}})
             }} activeKey={imgs.panelKey} style={{margin: "10px 0px"}}>
                 <Collapse.Panel collapsible={'disabled'} showArrow={false} header="添加内容" key={'1'}>
@@ -627,14 +637,14 @@ export const Content = (props) => {
                         <img alt="example" style={{width: '100%'}} src={imgs.previewImage}/>
                     </Modal>
                 </Collapse.Panel>
-            </Collapse>
+            </Collapse> : null}
             <Table
                 columns={columns}
                 dataSource={state.user.content.contents}
                 pagination={table.pagination}
                 onChange={async (param) => {
                     console.log(param)
-                    let pagination = await event.content.getContent(param)
+                    let pagination = await event.content.getContent(param, topic)
                     if (pagination) {
                         setTable({...table, ...{pagination: pagination}})
                     }
