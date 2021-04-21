@@ -89,6 +89,21 @@ export const createMenuGroup = async (formData) => {
     }
 }
 
+// 更新菜单组字段
+export const menuGroupUpdate = async (_id, fields, value) => {
+    const state = store.getState()
+    let r = await axios.post(`${config.API_OA_BASE}/v1/menu/group/update`, {
+        _id,
+        fields,
+        data: value
+    }, {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        store.dispatch({type: actions.setting.menu_group.UPDATE_FIELDS, _id: _id, fields, data: value})
+        return true
+    }
+}
+
 // 删除菜单组
 export const deleteMenuGroup = async (menu_group_id) => {
     const state = store.getState()

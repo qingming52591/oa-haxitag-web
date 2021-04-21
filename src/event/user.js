@@ -39,6 +39,14 @@ export const getUser = async (user = false) => {
     }
 
 }
+export const getGroupUser = async (group_id) => {
+    const state = store.getState()
+    let r = await axios.get(`${config.API_OA_BASE}/v1/user/setting/group?group_id=${group_id}`, {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        return data.data.users
+    }
+}
 
 export const saveUser = async (formData) => {
     const state = store.getState()
