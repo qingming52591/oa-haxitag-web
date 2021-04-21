@@ -15,7 +15,7 @@ import {
     Upload,
     Collapse,
     Divider,
-    Tabs, message, Tag, Popconfirm, Popover, Radio
+    Tabs, message, Tag, Popconfirm, Popover, Radio, Cascader
 } from "antd";
 import * as event from "../../event";
 import React from 'react'
@@ -238,6 +238,8 @@ export const Content = (props) => {
         score: 1
     })
     const [showResult, setShowResult] = React.useState(false)
+    const [topicShow, setTopicShow] = React.useState(false)
+    const [selectTopic, setSelectTopic] = React.useState([])
     const [edit, setEdit] = React.useState(
         {
             title_edit: false,
@@ -262,6 +264,7 @@ export const Content = (props) => {
             if (pagination) {
                 setTable({...table, ...{pagination: pagination}})
             }
+            await event.topic.getTopic({}, true)
         })()
     }, [])
     const uploadButton = (
@@ -382,6 +385,15 @@ export const Content = (props) => {
             render: (text, record) => {
                 return (
                     <>
+                        <Button type="link"
+                                onClick={(e) => {
+                                    setEdit({
+                                        ...edit, ...{
+                                            data: {...record}
+                                        }
+                                    })
+                                    setTopicShow(true)
+                                }}>主题</Button>
                         <Button type="link" disabled={record.result ? true : false}
                                 onClick={(e) => {
                                     setEdit({
@@ -402,6 +414,71 @@ export const Content = (props) => {
     ]
     return (
         <>
+            <Modal title={'查看主题'} visible={topicShow}
+                   onOk={() => setTopicShow(false)}
+                   onCancel={() => setTopicShow(false)}
+                   footer={null}
+                   width={'65%'}
+            >
+                {edit.data.topic ? edit.data.topic.map((item, index) => {
+                    let topic = state.topic.topic.topic.filter(temp => item === temp._id)
+                    topic = topic[0]
+                    return <Tag key={topic._id} closable onClose={async e => {
+                        let t = edit.data.topic.filter((tt, i) => i !== index)
+                        if (!await event.content.updateContent(edit.data._id, 'topic', t)) {
+                            message.error('修改失败')
+                            return false
+                        }
+                        setEdit({
+                            ...edit, ...{
+                                data: {...edit.data, ...{topic: t}}
+                            }
+                        })
+                    }}>{topic.name}</Tag>
+                }) : null}
+                <Select
+                    style={{width: '20%'}}
+                    mode="multiple"
+                    allowClear
+                    placeholder="选择主题"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                    value={selectTopic}
+                    onChange={value => setSelectTopic(value)}
+                >
+                    {state.topic.topic.topic.filter(item => {
+                        if (edit.data.topic) {
+                            return edit.data.topic.indexOf(item._id) === -1
+                        } else {
+                            return true
+                        }
+                    }).map((item) =>
+                        <Select.Option
+                            key={item._id}
+                            value={item._id}>{item.name}</Select.Option>
+                    )}
+                </Select>
+                <Button onClick={async e => {
+                    let topic = []
+                    if (edit.data.topic) {
+                        topic = [...edit.data.topic, ...selectTopic]
+                    } else {
+                        topic = selectTopic
+                    }
+                    if (!await event.content.updateContent(edit.data._id, 'topic', topic)) {
+                        message.error('修改失败')
+                        return false
+                    }
+                    setEdit({
+                        ...edit, ...{
+                            data: {...edit.data, ...{topic: topic}}
+                        }
+                    })
+                    setSelectTopic([])
+                }}>添加</Button>
+            </Modal>
             <Modal title={'查看结果'} visible={showResult}
                    onOk={() => setShowResult(false)}
                    onCancel={() => setShowResult(false)}

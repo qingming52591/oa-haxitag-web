@@ -79,7 +79,6 @@ export const SettingUser = (props) => {
                                             }}>
                                     <Button danger onClick={async (e) => {
                                         e.stopPropagation()
-                                        e.stopPropagation()
                                         if (await event.user.deleteUser(record._id)) {
                                             message.success('成功')
                                         } else {

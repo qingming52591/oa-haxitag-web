@@ -29,14 +29,14 @@ export const TopicContents = (props) => {
     const [topic, setTopic] = React.useState("")
     React.useEffect(() => {
         (async () => {
-            let pagination = await event.topic.getTopic({}, true)
+            await event.topic.getTopic({}, true)
         })()
     }, [])
     return (
         <>
             选择主题: <Select style={{width: "30%"}} value={topic.id} onChange={async e => {
             setTopic(e)
-            let pagination = await event.content.getContent({}, topic)
+            await event.content.getContent({}, topic)
         }}>
             {state.topic.topic.topic.map(item => <Select.Option value={item._id}>{item.name}</Select.Option>)}
         </Select>
