@@ -33,7 +33,7 @@ function getBase64(file, callback) {
     reader.readAsDataURL(file);
 }
 
-const SaveTag = ({key, keyWord, _id, item, setData, onClose, opt, is_new = false}) => {
+export const SaveTag = ({key, keyWord, _id, item, setData, onClose, opt, is_new = false}) => {
     const [show, setShow] = React.useState(false)
     let data = {
         is_new: is_new,
