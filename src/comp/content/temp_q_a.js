@@ -295,10 +295,11 @@ export const Knowledge = (props) => {
                             <SaveTag _id={edit._id} is_new={true} setData={saveData} create={showCreate} opt={'label'}/>
                         </div>
                     })()}
-                    {(() => {
-                        if (showCreate) {
-                            return <>
-                                <br/><Button onClick={async e => {
+                </Row>
+                {(() => {
+                    if (showCreate) {
+                        return <div><br/>
+                            <Button onClick={async e => {
                                 if (!await event.qa.saveQa(edit, table.pagination)) {
                                     message.error('修改失败')
                                     return false
@@ -306,10 +307,9 @@ export const Knowledge = (props) => {
                                 setShowResult(false)
                                 setShowCreate(false)
                             }}>保存</Button>
-                            </>
-                        }
-                    })()}
-                </Row>
+                        </div>
+                    }
+                })()}
             </Modal>
             <Row justify={'end'}>
                 <Button type={'primary'} onClick={async () => {
