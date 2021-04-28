@@ -367,6 +367,9 @@ export const TopicContentOpt = (props) => {
                 return topics.map(item => {
                     let topic = state.topic.topic.topic.filter(temp => item === temp._id)
                     topic = topic[0]
+                    if (!topic) {
+                        return null
+                    }
                     return <Tag>{topic.name}</Tag>
                 })
             }
