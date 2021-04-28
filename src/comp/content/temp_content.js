@@ -33,7 +33,7 @@ function getBase64(file, callback) {
     reader.readAsDataURL(file);
 }
 
-export const SaveTag = ({key, keyWord, _id, item, setData, onClose, opt, is_new = false}) => {
+export const SaveTag = ({key, keyWord, _id, item, setData, onClose, opt, is_new = false, create = false}) => {
     const [show, setShow] = React.useState(false)
     let data = {
         is_new: is_new,
@@ -66,7 +66,7 @@ export const SaveTag = ({key, keyWord, _id, item, setData, onClose, opt, is_new 
                                     size={'small'} step={0.01} precision={2}
                                     style={{width: '100%'}}/>
                 <Button onClick={() => {
-                    setData(data)
+                    setData(data, create)
                     setShow(false)
                 }}>保存</Button>
             </Space>
@@ -76,7 +76,7 @@ export const SaveTag = ({key, keyWord, _id, item, setData, onClose, opt, is_new 
         onClick={e => setShow(true)}
     >
         {is_new ? <Tag>+</Tag> : <Tag key={key} closable onClose={e => {
-            if (onClose) onClose(data)
+            if (onClose) onClose(data, create)
             setShow(false)
         }}>{item.tag}</Tag>}
     </Popover>

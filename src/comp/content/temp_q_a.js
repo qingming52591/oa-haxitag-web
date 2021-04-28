@@ -1,165 +1,349 @@
-import {store} from "../../store";
-import {Col, Row, Button, Form, Input, message, Modal, Table, Popconfirm, Tag, Space} from "antd";
-import {PlusOutlined} from '@ant-design/icons';
+import {
+    Col,
+    Row,
+    Button,
+    Form,
+    Input,
+    DatePicker,
+    Modal,
+    Table,
+    Space,
+    Avatar,
+    Select,
+    Checkbox,
+    InputNumber,
+    Upload,
+    Collapse,
+    Divider,
+    Tabs, message, Tag, Popconfirm, Popover, Radio, Cascader, Tooltip
+} from "antd";
 import * as event from "../../event";
 import React from 'react'
-import * as g from "../../g";
+import {Link} from "react-router-dom";
+import {InboxOutlined, PlusOutlined} from '@ant-design/icons'
 import * as util from '../../util'
-
+import * as time from '../../util/time'
+import * as g from '../../g'
+import test_img from '../../imgs/7777.png'
+import {store} from "../../store";
+import {SaveTag} from './temp_content'
+import TextArea from "antd/es/input/TextArea";
 
 export const Knowledge = (props) => {
-    const state = store.useContext()
-    const [showModal, setShowModal] = React.useState(false)
-    const [modalInit, setModalInit] = React.useState({})
+    const state = store.useContext();
+    const [table, setTable] = React.useState({
+        pagination: {current: 1, pageSize: 15, total: 0},
+        loading: false
+    })
+    const [edit, setEdit] = React.useState({
+        "_id": "",
+        "app_id": 10,
+        "uid": "0",
+        "content_id": "",
+        "question": "",
+        "answer": "",
+        "entity": [],
+        "label": [],
+        "agree_num": 0,
+        "disagree_num": 0,
+        "create_time": 0,
+        "status": 0
+    })
+    const [showResult, setShowResult] = React.useState(false)
+    const [showCreate, setShowCreate] = React.useState(false)
+    const [qEdit, setQEdit] = React.useState(false)
+    const [aEdit, setAEdit] = React.useState(false)
+    React.useEffect(() => {
+        (async () => {
+            let pagination = await event.qa.getQa(table.pagination)
+            if (pagination) {
+                setTable({...table, ...{pagination: pagination}})
+            }
+        })()
+    }, [])
+
     const columns = [
         {
             title: '问题',
-            dataIndex: 'a',
-            key: 'a',
-            ...util.getColSearchLocal('App名称', 'name')
+            dataIndex: 'question',
+            key: 'question',
+            ellipsis: true
         }, {
-            title: '回答',
-            dataIndex: 'q',
-            key: 'q',
-            render: ((text, record) => {
-                return text.substr(0, 50) + '...'
-            })
+            title: '答案',
+            dataIndex: 'answer',
+            key: 'answer',
+            onCell: () => {
+                return {
+                    style: {
+                        maxWidth: 150,
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        cursor: 'pointer'
+                    }
+                }
+            },
+            render: (text, record) => {
+                return <Tooltip trigger={"hover"} placement="right" title={text}>{text}</Tooltip>
+            }
         }, {
             title: '操作',
             key: 'action',
             render: (text, record) => {
-                return <Button danger onClick={(e) => e.stopPropagation()}>删除</Button>
+                return (
+                    <>
+                        <Button type="link"
+                                onClick={(e) => {
+                                    setEdit(record)
+                                    setShowResult(true)
+                                }}>修改</Button>
+                        <Button type="link" onClick={async () => {
+                            await event.qa.deleteQa(record._id, table.pagination)
+                            message.success('删除成功')
+                        }}>删除</Button>
+                    </>
+                )
             }
         }
     ]
+    const saveData = async (data, create) => {
+        let new_data = []
+        let key = ''
+        if (data.opt === 'entity') {
+            new_data = [...edit.entity]
+            key = 'entity'
+        } else if (data.opt === 'label') {
+            new_data = [...edit.label]
+            key = 'label'
+        } else {
+            return
+        }
+        if (data.is_new) {
+            new_data.push({
+                tag: data.tag,
+                score: data.score,
+                state: 0
+            })
+        } else {
+            new_data = new_data.map(item => item.tag === data.key ? {
+                tag: data.tag,
+                score: data.score,
+                state: 0
+            } : item)
+        }
+        if (!create && !await event.qa.updateQa(edit._id, key, new_data)) {
+            message.error('修改失败')
+            return false
+        }
+        setEdit({
+            ...edit, ...{[key]: new_data}
+        })
+        return true
+    }
+    const onClose = async (data, create) => {
+        let new_data = []
+        let key = ''
+        if (data.opt === 'entity') {
+            new_data = edit.entity.filter(item => item.tag !== data.tag)
+            key = 'entity'
+        } else if (data.opt === 'label') {
+            new_data = edit.label.filter(item => item.tag !== data.tag)
+            key = 'label'
+        } else {
+            return
+        }
+        if (!create && !await event.qa.updateQa(edit._id, key, new_data)) {
+            message.error('修改失败')
+            return false
+        }
+        setEdit({...edit, ...{[key]: new_data}})
+    }
     return (
         <>
-            <Row justify="end">
-                <Col span={2}>
-                    <EditKnowledge show={showModal} setShow={setShowModal} initData={modalInit}
-                                   setInitData={setModalInit}/>
-                    <Button type={'primary'} onClick={async () => {
-                        setModalInit({
-                            _id: '',
-                            name: '',
-                            enter: ''
-                        })
-                        setShowModal(true)
-                    }}>创建知识点</Button>
-                </Col>
+            <Modal title={'查看结果'} visible={showResult}
+                   onOk={() => {
+                       setShowResult(false)
+                       setShowCreate(false)
+                   }}
+                   onCancel={() => {
+                       setShowResult(false)
+                       setShowCreate(false)
+                   }}
+                   footer={null}
+                   width={'75%'}
+            >
+                <Row>
+                    <div style={{width: "100%"}}>
+                        <Divider orientation={'left'}>问题</Divider>
+                        <span onDoubleClick={(e) => {
+                            setQEdit(true)
+                        }}>
+                            {(() => {
+                                if (showCreate) {
+                                    return <Input
+                                        value={edit.question}
+                                        onChange={(e) => {
+                                            setEdit({
+                                                ...edit, ...{question: e.target.value}
+                                            })
+                                        }}
+                                    ></Input>
+                                } else {
+                                    if (qEdit) {
+                                        return <Input
+                                            ref={input => input ? input.focus() : null}
+                                            value={edit.question}
+                                            width={"100%"}
+                                            onChange={(e) => {
+                                                setEdit({
+                                                    ...edit, ...{question: e.target.value}
+                                                })
+                                            }}
+                                            onPressEnter={async (e) => {
+                                                if (!await event.qa.updateQa(edit._id, 'question', edit.question)) {
+                                                    message.error('修改失败')
+                                                    return false
+                                                }
+                                                setQEdit(false)
+                                            }}
+                                            onBlur={async e => {
+                                                if (!await event.qa.updateQa(edit._id, 'question', edit.question)) {
+                                                    message.error('修改失败')
+                                                    return false
+                                                }
+                                                setQEdit(false)
+                                            }
+                                            }
+                                        ></Input>
+                                    } else {
+                                        return edit.question
+                                    }
+                                }
+                            })()}
+                        </span>
+                        <Divider orientation={'left'}>答案</Divider>
+                        <span onDoubleClick={(e) => {
+                            setAEdit(true)
+                        }}>
+                            {(() => {
+                                if (showCreate) {
+                                    return <Input.TextArea
+                                        rows={10}
+                                        value={edit.answer}
+                                        onChange={(e) => {
+                                            setEdit({
+                                                ...edit, ...{answer: e.target.value}
+                                            })
+                                        }}
+                                    ></Input.TextArea>
+                                } else {
+                                    if (aEdit) {
+                                        return <Input.TextArea
+                                            rows={10}
+                                            ref={input => input ? input.focus() : null}
+                                            value={edit.answer}
+                                            onChange={(e) => {
+                                                setEdit({
+                                                    ...edit, ...{answer: e.target.value}
+                                                })
+                                            }}
+                                            onPressEnter={async e => {
+                                                if (!await event.qa.updateQa(edit._id, 'answer', edit.answer)) {
+                                                    message.error('修改失败')
+                                                    return false
+                                                }
+                                                setAEdit(false)
+                                            }
+                                            }
+                                            onBlur={async e => {
+                                                if (!await event.qa.updateQa(edit._id, 'answer', edit.answer)) {
+                                                    message.error('修改失败')
+                                                    return false
+                                                }
+                                                setAEdit(false)
+                                            }
+                                            }
+                                        ></Input.TextArea>
+                                    } else {
+                                        return edit.answer
+                                    }
+                                }
+                            })()}
+                        </span>
+                    </div>
+                    <Divider orientation={'left'}>实体</Divider>
+                    {(() => {
+                        return <div>
+                            {edit.entity.map((item, index) => {
+                                return <SaveTag _id={edit._id} key={item.tag} keyWord={item.tag} item={item}
+                                                setData={saveData}
+                                                onClose={onClose} create={showCreate} opt={'entity'}/>
+                            })}
+                            <SaveTag _id={edit._id} is_new={true} setData={saveData} opt={'entity'}
+                                     create={showCreate}/>
+                        </div>
+                    })()}
+
+                    <Divider orientation={'left'}>标签</Divider>
+                    {(() => {
+                        return <div>
+                            {edit.label.map((item, index) => {
+                                return <SaveTag _id={edit._id} key={item.tag} keyWord={item.tag} item={item}
+                                                setData={saveData}
+                                                onClose={onClose} create={showCreate} opt={'label'}/>
+                            })}
+                            <SaveTag _id={edit._id} is_new={true} setData={saveData} create={showCreate} opt={'label'}/>
+                        </div>
+                    })()}
+                    {(() => {
+                        if (showCreate) {
+                            return <Button onClick={async e => {
+                                if (!await event.qa.saveQa(edit, table.pagination)) {
+                                    message.error('修改失败')
+                                    return false
+                                }
+                                setShowResult(false)
+                                setShowCreate(false)
+                            }}>保存</Button>
+                        }
+                    })()}
+                </Row>
+            </Modal>
+            <Row justify={'end'}>
+                <Button type={'primary'} onClick={async () => {
+                    setEdit({
+                        ...edit, ...{
+                            "_id": "",
+                            "app_id": 10,
+                            "uid": "0",
+                            "content_id": "",
+                            "question": "",
+                            "answer": "",
+                            "entity": [],
+                            "label": [],
+                            "agree_num": 0,
+                            "disagree_num": 0,
+                            "create_time": 0,
+                            "status": 0
+                        }
+                    })
+                    setShowCreate(true)
+                    setShowResult(true)
+                }}>创建站点</Button>
             </Row>
             <Table
                 columns={columns}
-                dataSource={[
-                    {
-                        a: 'AI刷其第五短崩塌',
-                        q: '常言道，唯美食与爱不可辜负，相信每一位吃货小伙伴都抵挡不了美食的诱惑。只有你想不到，没有AI做不到的事情……超越味蕾界限：动物衍生品不再是“餐桌C位”这份世界上首个AI生成的调味，是Firmenich与微软合作开发的。Arla Foods的AI工具可以预测150万头奶牛的产奶量，并可以将产奶量减少到几个小时。',
-                        entity: ['日内瓦', 'SmartProteins', '瑞典酿酒厂', '伊曼纽尔·布斯特拉恩'],
-                        label: ['食物调味', '新冠疫情']
-                    }, {
-                        a: '烤牛肉的素料乳胶妙招',
-                        q: '近日，瑞士调味品巨头Firmenich宣布，利用AI研制出一种用于植物性肉类替代品的轻烤牛肉口味。目前，该公司推出了利用AI优化成分组合以制作自定义口味的牛肉口味，特别是对于越来越受欢迎的无肉健康饮食。由此产生的烤牛肉风味集合了Firmenich独特的配料和“SmartProteins”在植物蛋白替代品方面的专业知识。该产品组合可帮助用户在咸味食品、甜食和饮料中创建素食和纯素食，替代传统的肉类和奶类产品。无论是通过提供舒适和愉悦的时刻，还是解决向更健康的食品和饮料的更大转变”，他说。例如，乳制品行业在预测牛奶摄入量方面做得越好，公司就可以更好地规划和优化其整个价值链。',
-                        entity: ['日内瓦', 'SmartProteins', '瑞典酿酒厂', '伊曼纽尔·布斯特拉恩'],
-                        label: ['口感解决方案', '利用人工智能']
-                    }, {
-                        a: '模拟器怎样解码？',
-                        q: '本文将从模型算法和落地运用等角度做简要介绍，希望能给读者一些启发。04落地分享最后针对一些具体的场景展开介绍下，给读者一个更为完整的阅读体验。（Q2T的运用）2. 推荐召回接着我们再说一说向量体系在推荐召回中发挥的作用。今天的分享就到这里，谢谢大家。在文末分享、点赞、在看，给个三连击呗~~会员推荐：DataFun会员计划重磅发布！扫码了解更多：文章推荐：基于Flink的严选实时数仓实践关于我们：DataFunTalk 专注于大数据、人工智能技术应用的分享与交流。',
-                        entity: ['张俊', 'FAISS', 'Airbnb', 'DataFunTalk'],
-                        label: ['商品向量', '向量体系']
-                    }, {
-                        a: '如何在数据展示跨界场景',
-                        q: '严选于18年下半年开始探索向量化在搜索推荐场景中的运用，从最开始基于商品召回用户的任务到后续的搜索召回、搜索个性化排序、搜索底纹、搜索发现词、搜索建议词、跨类目推荐、推荐召回、多兴趣召回、通用排序、端智能重排等等，我们不断拓宽向量体系在严选的运用，在这过程中一点点迭代与沉淀。基于这个服务，我们进一步开发了通用排序服务，例如基于用户的实时向量对搜索结果做Top个性化重排、基于检索词对专题进行排序、对众多的活动页商品做实时个性化排序等等。1. 搜索场景先谈一谈搜索场景，搜索场景不仅仅限于商品的召回和排序，搜索的底纹、发现词、建议词等都能为搜索导流，而这些也都能利用统一向量体系得到较好的解决。（Q2I的运用）基于向量体系对搜索排序的优化也是水到渠成的，所有的优化可以看作是基于预训练向量的排序运用，而且扩展了数据的边界，不仅仅局限于搜索场景，将全局的行为都融入到了搜索中。（Q2C的运用）此外在搜索场景，为了充分利用搜索流量，我们还会做专题的召回以及和商品的混排，商品和专题属于异构数据，通常我们需要构建额外的模型来对专题作出排序。',
-                        entity: ['日内瓦', 'SmartProteins', '瑞典酿酒厂', '伊曼纽尔·布斯特拉恩'],
-                        label: ['兴趣向量', '用户向量', '向量体系']
-                    }
-                ]}
-                size={'small'}
-                scroll={{y: 750}}
-                bordered
-                onRow={(record) => {
-                    return {
-                        onClick: (event) => {
-                            setModalInit({
-                                _id: record._id,
-                                ask: record.a,
-                                enter: record.q,
-                                entity: record.entity,
-                                label: record.label
-                            })
-                            setShowModal(true)
-                        }
+                dataSource={state.qa.qas}
+                pagination={table.pagination}
+                onChange={async (param) => {
+                    let pagination = await event.qa.getQa(param)
+                    if (pagination) {
+                        setTable({...table, ...{pagination: pagination}})
                     }
                 }}
+                size={'small'}
+                bordered
             />
         </>
-    )
-}
-
-const EditKnowledge = (props) => {
-    const [form] = Form.useForm()
-    form.setFieldsValue(props.initData)
-    return (
-        <>
-            <Modal key={Math.random()}
-                   width={750}
-                   title={'编辑知识点'}
-                   visible={props.show}
-                   okText={'保存'} cancelText={'取消'}
-                   onCancel={(e) => {
-                       props.setShow(false)
-                       form.resetFields()
-                   }}
-                   onOk={() => {
-                   }}
-            >
-                <Form key={Math.random()} form={form}>
-                    <Form.Item label={'问题'} name={'ask'} rules={[
-                        {
-                            required: true,
-                            message: 'is required!',
-                        }
-                    ]}>
-                        <Input/>
-                    </Form.Item>
-                    <Form.Item label={'答案'} name={'enter'} rules={[
-                        {
-                            required: true,
-                            message: 'is required!',
-                        }
-                    ]}>
-                        <Input.TextArea rows={4}/>
-                    </Form.Item>
-
-                    <Form.Item label={'实体'} name={'entity'}>
-                        <EditableTagGroup name={'实体'} tags={form.getFieldValue('entity')}/>
-                    </Form.Item>
-                    <Form.Item label={'标签'} name={'label'}>
-                        <EditableTagGroup name={'标签'} tags={form.getFieldValue('label')}/>
-                    </Form.Item>
-                </Form>
-            </Modal>
-        </>
-    )
-}
-
-const EditableTagGroup = (props) => {
-    const [showInput, setShowInput] = React.useState(false)
-    return (
-        <Space>
-            {props.tags.map((item) => {
-                return <Tag closable>{item}</Tag>
-            })}
-            <span>
-                {
-                    showInput ? <Input onBlur={(e) => {
-                        setShowInput(false)
-                    }}/> : <Tag onClick={(e) => {
-                        setShowInput(true)
-                    }} className="site-tag-plus">
-                        <PlusOutlined/> {`添加${props.name}`}
-                    </Tag>
-                }
-                </span>
-        </Space>
     )
 }

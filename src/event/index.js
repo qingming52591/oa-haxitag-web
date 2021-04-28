@@ -8,6 +8,7 @@ import * as content from './content'
 import * as recommend from './recommend'
 import * as siteSpider from './site_spider'
 import * as topic from './topic'
+import * as qa from './qa'
 
 export {
     home,
@@ -19,5 +20,6 @@ export {
     content,
     recommend,
     siteSpider,
-    topic
+    topic,
+    qa
 }
