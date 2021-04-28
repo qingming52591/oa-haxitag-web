@@ -20,7 +20,7 @@ export const getContent = async (pagination, topic = '') => {
 }
 
 // 保存content
-export const saveContent = async (type, _data, topic = null, pagination = null) => {
+export const saveContent = async (type, _data, topic = [], pagination = null) => {
     const state = store.getState()
     let formData = new FormData()
     formData.append('type', type)

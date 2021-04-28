@@ -274,7 +274,7 @@ export const Content = (props) => {
         </div>
     );
 
-    const saveData = async (data) => {
+    const saveData = async (data, create) => {
         let new_data = []
         let key = ''
         if (data.opt === 'type') {
@@ -313,7 +313,7 @@ export const Content = (props) => {
         })
         return true
     }
-    const onClose = async (data) => {
+    const onClose = async (data, create) => {
         let new_data = []
         let key = ''
         if (data.opt === 'type') {
