@@ -297,7 +297,8 @@ export const Knowledge = (props) => {
                     })()}
                     {(() => {
                         if (showCreate) {
-                            return <Button onClick={async e => {
+                            return <>
+                                <br/><Button onClick={async e => {
                                 if (!await event.qa.saveQa(edit, table.pagination)) {
                                     message.error('修改失败')
                                     return false
@@ -305,6 +306,7 @@ export const Knowledge = (props) => {
                                 setShowResult(false)
                                 setShowCreate(false)
                             }}>保存</Button>
+                            </>
                         }
                     })()}
                 </Row>
