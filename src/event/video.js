@@ -26,3 +26,18 @@ export const saveVideo = async (formData) => {
         return true
     }
 }
+
+
+export const updateVideo = async (_id, fields, value) => {
+    const state = store.getState()
+    let r = await axios.post(`${config.API_OA_BASE}/v1/video/update`, {
+        _id,
+        fields,
+        data: value
+    }, {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        store.dispatch({type: actions.user.content.UPDATE_FIELDS, _id: _id, fields, data: value})
+        return true
+    }
+}
