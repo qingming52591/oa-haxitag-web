@@ -53,7 +53,13 @@ export const VideoTag = (props) => {
             dataIndex: 'keywords',
             key: 'keywords',
             render: (text, record) => {
-                return record.keywords.map(item => <Tag>{item}</Tag>)
+                return <>
+                    {record.keywords.map(item => <Tag>{item}</Tag>)}
+                    <Button type="link" onClick={() => {
+                        setEdit({...edit, ...record})
+                        setShowResult(true)
+                    }}>＋</Button>
+                </>
             }
         }, {
             title: '主题',
@@ -61,14 +67,20 @@ export const VideoTag = (props) => {
             key: 'topic',
             render: (text, record) => {
                 let topics = record.topic ? record.topic : []
-                return topics.map(item => {
-                    let topic = state.topic.topic.topic.filter(temp => item === temp._id)
-                    topic = topic[0]
-                    if (!topic) {
-                        return null
-                    }
-                    return <Tag>{topic.name}</Tag>
-                })
+                return <>
+                    {topics.map(item => {
+                        let topic = state.topic.topic.topic.filter(temp => item === temp._id)
+                        topic = topic[0]
+                        if (!topic) {
+                            return null
+                        }
+                        return <Tag>{topic.name}</Tag>
+                    })}
+                    <Button type="link" onClick={() => {
+                        setEdit({...edit, ...record})
+                        setShowResult(true)
+                    }}>＋</Button>
+                </>
             }
         }, {
             title: '处理状态',
