@@ -41,3 +41,14 @@ export const updateVideo = async (_id, fields, value) => {
         return true
     }
 }
+
+// 删除
+export const deleteVideo = async (_id,) => {
+    const state = store.getState()
+    let r = await axios.post(`${config.API_OA_BASE}/v1/video/delete?_id=${_id}`, {}, {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        await getVideo()
+        return true
+    }
+}

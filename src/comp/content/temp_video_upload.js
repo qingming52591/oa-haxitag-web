@@ -35,10 +35,6 @@ export const VideoUpload = (props) => {
     }, [])
     const columns = [
         {
-            title: '唯一标识',
-            dataIndex: '_id',
-            key: '_id'
-        }, {
             title: '视频名称',
             dataIndex: 'name',
             key: 'name',
@@ -92,25 +88,27 @@ export const VideoUpload = (props) => {
             key: 'keyframe',
             render: (text, record) => {
                 if (record.status === g.video_status.success) {
-                    return <Button type="link" onClick={() => {
-                        Modal.info({
-                            title: record.video_name,
-                            content: (
-                                <div>
-                                    <div>人声</div>
-                                    <audio controls>
-                                        <source src={`http://sckm.vip/video/${record.human_audio}`}/>
-                                    </audio>
-                                    <div>背景声</div>
-                                    <audio controls>
-                                        <source src={`http://sckm.vip/video/${record.bg_audio}`}/>
-                                    </audio>
-                                </div>
-                            ),
-                            onOk() {
-                            },
-                        });
-                    }}>查看声音</Button>
+                    return <>
+                        <Button type="link" onClick={() => {
+                            Modal.info({
+                                title: record.video_name,
+                                content: (
+                                    <div>
+                                        <div>人声</div>
+                                        <audio controls>
+                                            <source src={`http://sckm.vip/video/${record.human_audio}`}/>
+                                        </audio>
+                                        <div>背景声</div>
+                                        <audio controls>
+                                            <source src={`http://sckm.vip/video/${record.bg_audio}`}/>
+                                        </audio>
+                                    </div>
+                                ),
+                                onOk() {
+                                },
+                            });
+                        }}>查看声音</Button>
+                    </>
                 }
             }
         }, {
@@ -153,6 +151,12 @@ export const VideoUpload = (props) => {
                                 },
                             });
                         }}>结果展示</Button>
+                        <Button type="link" onClick={async e => {
+                            if (!event.video.deleteVideo(record._id)) {
+                                message.error('失败')
+                                return false
+                            }
+                        }}>删除</Button>
                     </Space>
                 </>)
             }
