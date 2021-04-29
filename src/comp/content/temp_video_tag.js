@@ -50,7 +50,7 @@ export const VideoTag = (props) => {
             key: 'name',
             render: (text, record) => {
                 return <>
-                    {record.keywords.map(item => <Tag>{item}</Tag>)}
+                    {record.name}
                     <Button type="link" onClick={() => {
                         setEdit({...edit, ...record})
                         setShowResult(true)
