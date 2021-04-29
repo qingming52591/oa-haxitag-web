@@ -48,6 +48,15 @@ export const VideoTag = (props) => {
             title: '视频名称',
             dataIndex: 'name',
             key: 'name',
+            render: (text, record) => {
+                return <>
+                    {record.keywords.map(item => <Tag>{item}</Tag>)}
+                    <Button type="link" onClick={() => {
+                        setEdit({...edit, ...record})
+                        setShowResult(true)
+                    }}>预览</Button>
+                </>
+            }
         }, {
             title: '关键词',
             dataIndex: 'keywords',
