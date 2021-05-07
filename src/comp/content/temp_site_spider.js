@@ -125,14 +125,6 @@ export const SiteSpider = (props) => {
 
     const columns = [
         {
-            title: '唯一标识',
-            dataIndex: '_id',
-            key: '_id',
-            ellipsis: true,
-            render: (text, record) => {
-                return <a target={'blank'} href={record.path}>{record._id}</a>
-            }
-        }, {
             title: '站点名称',
             dataIndex: 'name',
             key: 'name'

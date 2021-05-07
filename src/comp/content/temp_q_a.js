@@ -331,7 +331,7 @@ export const Knowledge = (props) => {
                     })
                     setShowCreate(true)
                     setShowResult(true)
-                }}>创建站点</Button>
+                }}>创建问答</Button>
             </Row>
             <Table
                 columns={columns}

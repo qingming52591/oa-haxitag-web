@@ -26,6 +26,7 @@ import * as g from '../../g'
 import test_img from '../../imgs/7777.png'
 import {store} from "../../store";
 import {re} from '../../util/re'
+import * as time from "../../util/time";
 
 function getBase64(file, callback) {
     const reader = new FileReader();
@@ -342,12 +343,13 @@ export const Content = (props) => {
 
     const columns = [
         {
-            title: '唯一标识',
-            dataIndex: '_id',
-            key: '_id',
+            title: '标题',
+            dataIndex: 'title',
+            key: 'title',
             ellipsis: true,
+            // width: 200,
             render: (text, record) => {
-                return <a target={'blank'} href={record.path}>{record._id}</a>
+                return record.title
             }
         }, {
             title: '文件类型',
@@ -364,13 +366,11 @@ export const Content = (props) => {
                 return g.contents_result_desc[record.result]
             }
         }, {
-            title: '标题',
-            dataIndex: 'title',
-            key: 'title',
-            ellipsis: true,
-            // width: 200,
+            title: '入库时间',
+            dataIndex: 'create_time',
+            key: 'create_time',
             render: (text, record) => {
-                return record.title
+                return time.timeFromMs(text)
             }
         }, {
             title: '摘要',
@@ -394,6 +394,10 @@ export const Content = (props) => {
                                     })
                                     setTopicShow(true)
                                 }}>主题</Button>
+                        <Button type="link" onClick={async () => {
+                            await event.content.deleteContent(record._id, table.pagination)
+                            message.success('删除成功')
+                        }}>删除</Button>
                         <Button type="link" disabled={record.result ? true : false}
                                 onClick={(e) => {
                                     setEdit({
@@ -402,11 +406,7 @@ export const Content = (props) => {
                                         }
                                     })
                                     setShowResult(true)
-                                }}>结果展示</Button>
-                        <Button type="link" onClick={async () => {
-                            await event.content.deleteContent(record._id, table.pagination)
-                            message.success('删除成功')
-                        }}>删除</Button>
+                                }}>检查编辑</Button>
                     </>
                 )
             }
