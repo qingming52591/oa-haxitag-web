@@ -5,7 +5,7 @@ const config = {
     API_OA_PREFIX: API_OA_PREFIX,
     API_OA_HOST: API_OA_HOST,
     API_OA_BASE: `${API_OA_HOST}/${API_OA_PREFIX}`,
-    VIDEO_BASE: `${API_OA_HOST}`,
+    VIDEO_BASE: 'http://sckm.vip:30000',
     TITLE: '阅粒智能知识系统',
     DEBUG: false
 }
