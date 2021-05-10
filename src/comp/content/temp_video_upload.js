@@ -17,6 +17,7 @@ import {
     message,
     Tag
 } from "antd";
+import config from "../../conf"
 import * as event from "../../event";
 import React from 'react'
 import {Link} from "react-router-dom";
@@ -72,7 +73,7 @@ export const VideoUpload = (props) => {
                                             "object-fit": "fill"
                                         }}
                                              id={record.id} controls
-                                             src={`http://sckm.vip/video/${item}`}/>)}
+                                             src={`${config.API_OA_BASE}/video/${item}`}/>)}
 
                                 </div>
                             ),
@@ -96,11 +97,11 @@ export const VideoUpload = (props) => {
                                     <div>
                                         <div>人声</div>
                                         <audio controls>
-                                            <source src={`http://sckm.vip/video/${record.human_audio}`}/>
+                                            <source src={`${config.VIDEO_BASE}/video/${record.human_audio}`}/>
                                         </audio>
                                         <div>背景声</div>
                                         <audio controls>
-                                            <source src={`http://sckm.vip/video/${record.bg_audio}`}/>
+                                            <source src={`${config.VIDEO_BASE}/video/${record.bg_audio}`}/>
                                         </audio>
                                     </div>
                                 ),
@@ -138,12 +139,12 @@ export const VideoUpload = (props) => {
                                         <div>原视频:</div>
                                         <video style={{width: "100%", height: "100%", "object-fit": "fill"}}
                                                id={record.id} controls
-                                               src={`http://sckm.vip/video/${record.origin}`}/>
+                                               src={`${config.VIDEO_BASE}/video/${record.origin}`}/>
                                         <div>精彩片段:</div>
                                         {record.video_clip.map(item =>
                                             <video style={{width: "100%", height: "100%", "object-fit": "fill"}}
                                                    id={record.id} controls
-                                                   src={`http://sckm.vip/video/${item}`}/>)}
+                                                   src={`${config.VIDEO_BASE}/video/${item}`}/>)}
 
                                     </div>
                                 ),

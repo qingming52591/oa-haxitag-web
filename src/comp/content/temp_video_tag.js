@@ -24,6 +24,7 @@ import {InboxOutlined} from '@ant-design/icons'
 import * as util from '../../util'
 import {store} from "../../store"
 import * as g from '../../g'
+import config from "../../conf";
 
 export const VideoTag = (props) => {
     const state = store.useContext()
@@ -131,7 +132,7 @@ export const VideoTag = (props) => {
                     <Col span={13}>
                         <video style={{width: "100%", height: "100%", "object-fit": "fill"}}
                                id={edit.id} controls
-                               src={`http://sckm.vip/video/${edit.origin}`}/>
+                               src={`${config.VIDEO_BASE}/video/${edit.origin}`}/>
                     </Col>
                     <Col span={11} style={{paddingLeft: 10}}>
                         <Divider orientation={'left'}>标题</Divider>
