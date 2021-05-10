@@ -40,7 +40,7 @@ export class KGManager extends React.Component {
         //初始化数据
         const nodeData = [
             // root
-            {id: 1, name: '阅粒知识管理'},
+            {id: 1, name: '阅粒'},
             // level1
             {id: 2, name: '规章制度'},
             {id: 3, name: '财务管理'},
