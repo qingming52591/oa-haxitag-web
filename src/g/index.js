@@ -55,6 +55,7 @@ export const content_type = {
     pptx: 'pptx',
     audio: 'audio',
     video: 'video',
+    note: 'note'
 }
 export const content_type_desc = {
     [content_type.html]: "网页",
@@ -66,7 +67,8 @@ export const content_type_desc = {
     [content_type.ppt]: "ppt",
     [content_type.pptx]: "ppt",
     [content_type.audio]: "语音",
-    [content_type.video]: "视频"
+    [content_type.video]: "视频",
+    [content_type.note]: "笔记"
 }
 // content 处理结果
 export const contents_result = {

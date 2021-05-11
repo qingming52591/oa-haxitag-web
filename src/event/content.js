@@ -9,9 +9,9 @@ import * as g from '../g'
 
 
 // 获取content
-export const getContent = async (pagination, topic = '') => {
+export const getContent = async (pagination, topic = '', type = '') => {
     const state = store.getState()
-    let r = await axios.get(`${config.API_OA_BASE}/v1/contents/list?page_num=${pagination.current}&page_size=${pagination.pageSize}&topic=${topic}`, {headers: {token: state.user.info.token}})
+    let r = await axios.get(`${config.API_OA_BASE}/v1/contents/list?page_num=${pagination.current}&page_size=${pagination.pageSize}&topic=${topic}&type=${type}`, {headers: {token: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         store.dispatch({type: actions.user.content.UPDATE_CONTENTS, contents: data.data.contents})
