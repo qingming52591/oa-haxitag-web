@@ -73,7 +73,7 @@ export const VideoUpload = (props) => {
                                             "object-fit": "fill"
                                         }}
                                              id={record.id} controls
-                                             src={`${config.API_OA_BASE}/video/${item}`}/>)}
+                                             src={`${config.VIDEO_BASE}/video/${item}`}/>)}
 
                                 </div>
                             ),
