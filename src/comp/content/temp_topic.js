@@ -64,9 +64,7 @@ export const Topic = (props) => {
                     <>
                         <Button type="link" onClick={(e) => {
                             e.stopPropagation()
-                            setEdit({
-                                ...edit, ...record
-                            })
+                            setEdit({...record})
                             setSourceShow(true)
                         }}>数据源</Button>
                         <Button type="link" onClick={async (e) => {
@@ -93,7 +91,8 @@ export const Topic = (props) => {
             >
                 <EditTopic edit={edit} open={setShowResult} pagination={pagination}/>
             </Modal>
-            <AddDataSource edit={edit} show={sourceShow} open={setSourceShow}
+            <AddDataSource edit={edit} setEdit={setEdit} show={sourceShow} open={setSourceShow}
+                           pagination={pagination}
                            onOk={() => setSourceShow(false)}
                            onCancel={() => setSourceShow(false)}/>
             <Row justify="end">
@@ -126,7 +125,9 @@ export const Topic = (props) => {
 }
 
 const AddDataSource = (props) => {
-    const [sourceType, setSourceType] = React.useState('file')
+    const [urlEdit, setUrlEdit] = React.useState({edit: false, index: 0})
+    const [urlNew, setUrlNew] = React.useState(false)
+    const [sourceType, setSourceType] = React.useState('site')
     const [docs, setDocs] = React.useState([])
     return <Modal title={'编辑'} visible={props.show}
                   onOk={props.onOk}
@@ -136,6 +137,70 @@ const AddDataSource = (props) => {
                   destroyOnClose
     >
         <Tabs onChange={key => setSourceType(key)} type="card">
+            <Tabs.TabPane tab="网站" key="site">
+                {
+                    (() => {
+                        let ele = []
+                        if (props.edit.urls) {
+                            ele.push(props.edit.urls.map((item, index) => {
+                                if (urlEdit.edit && urlEdit.index === index) {
+                                    return <Input value={item} style={{width: "10%"}}
+                                                  onPressEnter={e => {
+                                                      let urls = props.edit.urls ? [...props.edit.urls] : []
+                                                      urls[index] = e.target.value
+                                                      if (!event.topic.saveTopicUrl(props.edit._id, urls, sourceType, props.pagination)) {
+                                                          message.error('设置失败')
+                                                          return
+                                                      }
+                                                      props.setEdit({...props.edit, ...{urls: urls}})
+                                                      setUrlNew(false)
+                                                      setUrlEdit({edit: false, index: index})
+                                                  }}
+                                                  onChange={e => {
+                                                      let urls = props.edit.urls ? [...props.edit.urls] : []
+                                                      urls[index] = e.target.value
+                                                      if (!event.topic.saveTopicUrl(props.edit._id, urls, sourceType, props.pagination)) {
+                                                          message.error('设置失败')
+                                                          return
+                                                      }
+                                                      props.setEdit({...props.edit, ...{urls: urls}})
+                                                  }}
+                                    />
+                                } else {
+                                    return <Tag closable
+                                                onDoubleClick={e => {
+                                                    setUrlEdit({edit: true, index: index})
+                                                }}
+                                                onClose={e => {
+                                                    let urls = props.edit.urls.filter((item, num) => {
+                                                        if (num !== index) return true
+                                                    })
+                                                    if (!event.topic.saveTopicUrl(props.edit._id, urls, sourceType, props.pagination)) {
+                                                        message.error('设置失败')
+                                                        return
+                                                    }
+                                                    props.setEdit({...props.edit, ...{urls: urls}})
+                                                }}
+                                    >{item}</Tag>
+                                }
+                            }))
+                        }
+                        ele.push(urlNew ?
+                            <Input style={{width: "10%"}} onPressEnter={async e => {
+                                let urls = props.edit.urls ? [...props.edit.urls] : []
+                                urls.push(e.target.value)
+                                if (!event.topic.saveTopicUrl(props.edit._id, urls, sourceType, props.pagination)) {
+                                    message.error('设置失败')
+                                    return
+                                }
+                                props.setEdit({...props.edit, ...{urls: urls}})
+                                setUrlNew(false)
+                            }}/> :
+                            <Tag onClick={e => setUrlNew(true)}>+</Tag>)
+                        return ele
+                    })()
+                }
+            </Tabs.TabPane>
             <Tabs.TabPane tab="文件" key="file">
                 <div>
                     <Upload
@@ -171,9 +236,6 @@ const AddDataSource = (props) => {
                         props.open(false)
                     }}>完成</Button>
                 </div>
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="网站" key="site">
-                开发中...
             </Tabs.TabPane>
         </Tabs>
     </Modal>

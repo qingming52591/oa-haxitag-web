@@ -56,3 +56,21 @@ export const getTopicContent = async (topic_id, pagination) => {
         return {current: data.data.page_num, pageSize: data.data.page_size, total: data.data.total}
     }
 }
+
+export const saveTopicUrl = async (_id, urls, source_type, pagination) => {
+    try {
+        const state = store.getState()
+        let formData = new FormData()
+        formData.append('_id', _id)
+        formData.append('data', JSON.stringify(urls))
+        formData.append('source_type', source_type)
+        let r = await axios.post(`${config.API_OA_BASE}/v1/topic/source`, formData, {headers: {token: state.user.info.token}})
+        let {headers, data} = http.getHttpHeardData(r)
+        if (headers && data) {
+            await getTopic(pagination)
+            return true
+        }
+    } catch (e) {
+        util.log(e, true)
+    }
+}

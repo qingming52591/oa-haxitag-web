@@ -171,7 +171,17 @@ export const SiteSpider = (props) => {
                 return (
                     <>
                         <Button type="link" disabled={record.result ? true : false}
-                                onClick={(e) => {
+                                onClick={async (e) => {
+                                    e.stopPropagation()
+                                    let result = await event.siteSpider.emit({
+                                        "_id": record._id,
+                                        "enter": record.enter,
+                                        "lang": record.lang,
+                                        "weight": record.weight
+                                    }, table.pagination)
+                                    if (!result) {
+                                        message.error('操作失败')
+                                    }
                                     message.info('操作成功')
                                 }}>抓取</Button>
                     </>

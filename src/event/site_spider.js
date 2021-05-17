@@ -35,3 +35,20 @@ export const saveSiteSpider = async (_data, pagination) => {
     }
 
 }
+// 开始抓取
+export const emit = async (_data, pagination) => {
+    const state = store.getState()
+
+
+    let r = await axios.post(`${config.API_OA_BASE}/v1/spider/site/emit`, {..._data}, {
+        headers: {
+            token: state.user.info.token
+        }
+    })
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        await getSiteSpider(pagination)
+        return true
+    }
+
+}
