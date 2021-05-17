@@ -349,7 +349,7 @@ export const Content = (props) => {
             ellipsis: true,
             // width: 200,
             render: (text, record) => {
-                return record.title
+                return <a target={'blank'} href={record.path}>{record.title}</a>
             }
         }, {
             title: '文件类型',
