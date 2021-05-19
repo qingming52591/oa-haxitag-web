@@ -19,6 +19,18 @@ export const getContent = async (pagination, topic = '', type = '') => {
     }
 }
 
+// 获取 topic content
+export const getTopicContent = async (pagination, topic = []) => {
+    const state = store.getState()
+    let r = await axios.post(`${config.API_OA_BASE}/v1/contents/topic/list?page_num=${pagination.current}&page_size=${pagination.pageSize}`,
+        {topic}, {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        store.dispatch({type: actions.user.content.UPDATE_CONTENTS, contents: data.data.contents})
+        return {current: data.data.page_num, pageSize: data.data.page_size, total: data.data.total}
+    }
+}
+
 // 保存content
 export const saveContent = async (type, _data, topic = [], pagination = null) => {
     const state = store.getState()

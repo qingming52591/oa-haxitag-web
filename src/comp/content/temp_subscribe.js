@@ -1,115 +1,166 @@
-import {List, Col, Row, Button, Form, Input, message, Modal, Table, Space, Avatar, Card, Image, Tag} from "antd";
+import {
+    List,
+    Col,
+    Row,
+    Button,
+    Form,
+    Input,
+    message,
+    Modal,
+    Table,
+    Space,
+    Avatar,
+    Card,
+    Image,
+    Tag,
+    Select
+} from "antd";
 import * as event from "../../event";
 import React from 'react'
 import {Link} from "react-router-dom";
 import {MessageOutlined, LikeOutlined, StarOutlined, TagOutlined} from '@ant-design/icons'
 import zongjingban from '../../imgs/zongjingban.png'
 import hr from '../../imgs/hr.jpeg'
+import {store} from "../../store";
+import * as g from "../../g";
+import * as time from "../../util/time";
 
 
 export const Subscribe = (props) => {
-    const listData = [
+    const state = store.useContext();
+    const [pagination, setPagination] = React.useState({current: 1, pageSize: 15, total: 0})
+    const [userTopics, setUserTopics] = React.useState([])
+    const [select, setSelect] = React.useState(null)
+    const [selectTopic, setSelectTopic] = React.useState([])
+    React.useEffect(() => {
+        (async () => {
+            await event.topic.getTopic({}, true)
+            let topics = await event.user.getUserTopic()
+            if (topics.length < 0) {
+                message.info('请先订阅主题')
+            }
+            setUserTopics(topics)
+            let p = await event.content.getTopicContent(pagination, topics.map(item => item._id))
+            if (p) {
+                setPagination(p)
+            }
+        })()
+    }, [])
+    const columns = [
         {
-            href: 'https://www.yueli.com',
-            title: '【置顶】新员工培训手册',
-            avatar: {hr},
-            come_from: 'HR',
-            description:
-                '欢迎加入我司！聚光灯已开，请起舞吧！',
-            content:
-                '小鲜肉们，攻略都在这里了，宝藏就呆你们自己发掘了！',
-        },
-        {
-            href: 'https://www.yueli.com',
-            title: '【军】销售团队军令状',
-            avatar: {zongjingban},
-            come_from: '总经办',
-            description:
-                '',
-            content:
-                '立贴为证！我部门季度目标，现实一个"小目标"！',
-        },
-        {
-            href: 'https://www.yueli.com',
-            title: '年终奖发放制度',
-            avatar: {hr},
-            come_from: 'HR',
-            description:
-                '',
-            content:
-                '2020年年终奖发放制度',
+            title: '标题',
+            dataIndex: 'title',
+            key: 'title',
+            ellipsis: true,
+            // width: 200,
+            render: (text, record) => {
+                return <a target={'blank'} href={record.path}>{record.title}</a>
+            }
+        }, {
+            title: '文件类型',
+            dataIndex: 'type',
+            key: 'type',
+            render: (text, record) => {
+                return g.content_type_desc[record.type]
+            }
+        }, {
+            title: '摘要',
+            dataIndex: 'yl_summary',
+            key: 'yl_summary',
+            render: (text, record) => {
+                return record.yl_summary.slice(0, 40)
+            }
+        }, {
+            title: '入库时间',
+            dataIndex: 'create_time',
+            key: 'create_time',
+            render: (text, record) => {
+                return time.timeFromMs(text)
+            }
         }
     ]
-    const IconText = ({icon, text}) => (
-        <Space>
-            {React.createElement(icon)}
-            {text}
-        </Space>
-    )
-    const getImg = (come_from) => {
-        if (come_from === 'HR') {
-            return <img
-                width={200}
-                alt="logo"
-                src={hr}
-            />
-        } else if (come_from === '总经办') {
-            return <img
-                width={200}
-                alt="logo"
-                src={zongjingban}
-            />
-        }
-    }
     return (<>
         <Row>
-            <Button style={{margin: 5, "border-radius": "10px"}}>深创投</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>人工智能</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>AI</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>互联网产业简报</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>比亚迪</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>企业知识管理</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>国务院创业政策</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>制造业</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>投融资</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>社区电商</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>社区社交</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>知识图谱</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>出海</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>区块链</Button>
-            <Button style={{margin: 5, "border-radius": "10px"}}>每日互联网热点</Button>
+
+            <Tag style={{margin: 5, "border-radius": "10px"}}
+                 onClick={async e => {
+                     setSelect(null)
+                     setPagination({current: 1, pageSize: 15, total: 0})
+                     let p = await event.content.getTopicContent(pagination, userTopics.map(item => item._id))
+                     if (p) {
+                         setPagination(p)
+                     }
+                 }}>全部</Tag>
+            {userTopics.map(item =>
+                <Tag key={item._id} closable style={{margin: 5, "border-radius": "10px"}}
+                     onClose={async e => {
+                         if (await event.user.setUserTopic('del', [item._id])) {
+                             setUserTopics(userTopics.filter(temp => temp._id !== item._id))
+                         }
+                     }}
+                     onClick={async e => {
+                         setSelect(item._id)
+                         let p = await event.content.getContent(pagination, item._id)
+                         if (p) {
+                             setPagination(p)
+                         }
+                     }}>{item.name}</Tag>)}
+            <Select
+                style={{width: '20%'}}
+                mode="multiple"
+                allowClear
+                placeholder="选择订阅主题"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }
+                value={selectTopic}
+                onChange={value => setSelectTopic(value)}
+            >
+                {state.topic.topic.topic.filter(item => {
+                    let topic_id = userTopics.map(item => item._id)
+                    if (topic_id) {
+                        return topic_id.indexOf(item._id) === -1
+                    } else {
+                        return true
+                    }
+                }).map((item) =>
+                    <Select.Option
+                        key={item._id}
+                        value={item._id}>{item.name}</Select.Option>
+                )}
+            </Select>
+            <Button onClick={async e => {
+                if (await event.user.setUserTopic('add', selectTopic)) {
+                    let topics = []
+                    state.topic.topic.topic.map(item => {
+                        if (selectTopic.indexOf(item._id) !== -1) {
+                            topics.push(item)
+                        }
+                    })
+                    setSelectTopic([])
+                    setUserTopics([...userTopics, ...topics])
+                }
+            }}>添加</Button>
         </Row>
-        <List
-            itemLayout="vertical"
-            size="small"
-            style={{"background-color": '#fff'}}
-            split={true}
-            pagination={{
-                onChange: page => {
-                    console.log(page);
-                },
-                pageSize: 5,
+        <Table
+            columns={columns}
+            dataSource={state.user.content.contents}
+            pagination={pagination}
+            onChange={async (param) => {
+                let method = null
+                if (select) {
+                    method = event.content.getContent(pagination, select)
+                } else {
+                    method = event.content.getTopicContent(pagination, userTopics.map(item => item._id))
+                }
+                let p = await method
+                if (p) {
+                    setPagination(pagination)
+                }
             }}
-            dataSource={listData}
-            renderItem={item => (
-                <List.Item
-                    key={item.title}
-                    actions={[
-                        <IconText icon={TagOutlined} text={item.come_from} key="1"/>,
-                        <IconText icon={StarOutlined} text="156" key="2"/>,
-                        <IconText icon={LikeOutlined} text="156" key="3"/>,
-                        <IconText icon={MessageOutlined} text="2" key="4"/>,
-                    ]}
-                    extra={getImg(item.come_from)}
-                >
-                    <List.Item.Meta
-                        // avatar={<Avatar src={item.avatar}/>}
-                        title={<a target={"_blank"} href={item.href}>{item.title}</a>}
-                        description={item.description}
-                    />
-                    {item.content}
-                </List.Item>
-            )}
+            size={'small'}
+            bordered
         />
     </>)
 }

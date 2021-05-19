@@ -37,7 +37,6 @@ export const getUser = async (user = false) => {
             store.dispatch({type: actions.setting.user.UPDATE_SETTING_USER, user: data.data.users})
         }
     }
-
 }
 export const getGroupUser = async (group_id) => {
     const state = store.getState()
@@ -75,6 +74,25 @@ export const deleteUser = async (uid) => {
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         await getUser()
+        return true
+    }
+}
+
+// 获取用户订阅的主题
+export const getUserTopic = async () => {
+    const state = store.getState()
+    let r = await axios.get(`${config.API_OA_BASE}/v1/user/follow/topic`, {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
+        return data.data.topics
+    }
+}
+// 设置用户订阅的主题
+export const setUserTopic = async (opt, topic_id) => {
+    const state = store.getState()
+    let r = await axios.post(`${config.API_OA_BASE}/v1/user/follow/topic`, {opt, topic_id}, {headers: {token: state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r)
+    if (headers && data) {
         return true
     }
 }
