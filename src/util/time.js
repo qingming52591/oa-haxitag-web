@@ -11,8 +11,8 @@ import * as util from '../util'
 export const timeFromMs = (millisecond) => {
     let d = new Date(parseInt(millisecond))
     let year = d.getFullYear()
-    let month = d.getMonth() < 10 ? "0" + d.getMonth() : d.getMinutes()
-    let day = d.getDay() < 10 ? "0" + d.getDay() : d.getDay()
+    let month = d.getMonth() < 9 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1
+    let day = d.getDate() < 10 ? "0" + d.getDate() : d.getDate()
     let hour = d.getHours() < 10 ? "0" + d.getHours() : d.getHours()
     let minu = d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes()
     let second = d.getSeconds() < 10 ? "0" + d.getSeconds() : d.getSeconds()
