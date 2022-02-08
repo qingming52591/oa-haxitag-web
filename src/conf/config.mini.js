@@ -1,5 +1,5 @@
 let API_OA_PREFIX = 'oa-haxitag'
-let API_OA_HOST = 'http://mini.sckm.vip'
+let API_OA_HOST = 'http://sckm.vip'
 
 const config = {
     API_OA_PREFIX: API_OA_PREFIX,
