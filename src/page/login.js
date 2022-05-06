@@ -1,6 +1,8 @@
 import React from "react"
 import {Row, Col, Form, Input, Button} from "antd";
 import * as event from '../event'
+import {Layout} from "antd/lib/index";
+const {Header, Content, Sider, Footer} = Layout
 
 const Login = (props) => {
     const layout = {
@@ -18,7 +20,8 @@ const Login = (props) => {
         },
     };
     return (
-        <Row type="flex" justify="center" align="middle" style={{minHeight: '100vh'}}>
+        <Layout style={{minHeight: '100vh'}}>
+        <Row type="flex" justify="center" align="middle" style={{minHeight: '90vh'}}>
             <Form {...layout} name="basic" onFinish={event.user.onLogin}>
                 <Form.Item label="团队账户" name="team">
                     <Input defaultValue={'haxitag.com'}/>
@@ -38,7 +41,12 @@ const Login = (props) => {
                 </Form.Item>
 
             </Form>
+
         </Row>
+            <Layout style={{minHeight: '10vh'}}>
+                <Footer style={{textAlign: 'center',color:'#C0BDBD'}}>版权所有 © 上海万竿斜信息科技有限公司 <a style={{color:'#C0BDBD'}} href="http://beian.miit.gov.cn/state/outPortal/loginPortal.action">沪ICP备19013840号-3</a></Footer>
+            </Layout>
+        </Layout>
     )
 };
 

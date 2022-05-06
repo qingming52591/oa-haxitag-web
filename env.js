@@ -1,5 +1,6 @@
 const env = {
-    mini: 'mini'
+    mini: 'mini',
+    zhaoli:'zhaoli'
 }
 
 
