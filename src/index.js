@@ -5,12 +5,12 @@ import reportWebVitals from './reportWebVitals';
 import {Provider} from './store'
 import App from './App'
 import * as util from './util'
-import {Router} from "react-router-dom";
+import {BrowserRouter as Router} from "react-router-dom";
 
 
 ReactDOM.render(
     <Provider>
-        <Router history={util.history}>
+        <Router>
             <App/>
         </Router>
     </Provider>,

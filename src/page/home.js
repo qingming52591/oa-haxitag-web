@@ -7,7 +7,7 @@ import React from "react"
 import {store} from "../store";
 import {Col, Layout, Menu, Row} from 'antd';
 import * as event from '../event'
-import {Route, Switch, Link} from "react-router-dom";
+import {Route, Switch, Link, RouteWithSubRoutes} from "react-router-dom";
 import * as comps from '../comp/content'
 import * as g from '../g'
 import config from "../conf";
@@ -76,37 +76,35 @@ const Home = (props) => {
                 <Content style={{margin: '0 0px'}}>
                     <div className="site-layout-background" style={{padding: 1, minHeight: 360}}>
                         <Switch>
-                            <Route exact key={"write_note"} path={'/note/write'}
-                                   component={comps.default['EditTakeNotes']}/>
-                            {state.user.menu.user_menu.map(item => {
-                                let t = item
-                                if (item.children.length > 0) {
-                                    t = item.children.map(child => {
-                                        let tt = item
-                                        if (child.jump === g.menu_jump.app) {
-                                            tt = <Route exact key={child._id} path={`${child.path}/:app_id`}
-                                                        component={comps.default[child.comp]}/>
-                                        } else if (child.jump === g.menu_jump.comp) {
-                                            tt = <Route exact key={child._id} path={child.path}
-                                                        component={comps.default[child.comp]}/>
-                                        } else {
-                                            tt = <Route/>
-                                        }
-                                        return tt
-                                    })
-                                } else {
-                                    if (item.jump === g.menu_jump.app) {
-                                        t = <Route exact key={item._id} path={`${item.path}/:app_id`}
-                                                   component={comps.default[item.comp]}/>
-                                    } else if (item.jump === g.menu_jump.comp) {
-                                        t = <Route exact key={item._id} path={item.path}
-                                                   component={comps.default[item.comp]}/>
+                            {(() => {
+                                let routes = []
+                                state.user.menu.user_menu.map(item => {
+                                    if (item.children.length > 0) {
+                                        item.children.map(child => {
+                                            if (child.jump === g.menu_jump.app) {
+                                                routes.push(<Route exact key={child._id} path={`${child.path}/:app_id`}
+                                                                   component={comps.default[child.comp]}/>)
+                                            } else if (child.jump === g.menu_jump.comp) {
+                                                routes.push(<Route exact key={child._id} path={child.path}
+                                                                   component={comps.default[child.comp]}/>)
+                                            }
+                                            return undefined
+                                        })
                                     } else {
-                                        t = <Route/>
+                                        if (item.jump === g.menu_jump.app) {
+                                            routes.push(<Route exact key={item._id} path={`${item.path}/:app_id`}
+                                                               component={comps.default[item.comp]}/>)
+                                        } else if (item.jump === g.menu_jump.comp) {
+                                            routes.push(<Route exact key={item._id} path={item.path}
+                                                               component={comps.default[item.comp]}/>)
+                                        }
                                     }
-                                }
-                                return t
-                            })}
+                                    return undefined
+                                })
+                                routes.push(<Route exact key={"write_note"} path={'/note/write'}
+                                                   component={comps.default['EditTakeNotes']}/>)
+                                return routes
+                            })()}
                         </Switch>
                     </div>
                 </Content>
