@@ -1,5 +1,5 @@
 let API_OA_PREFIX = 'oa-haxitag'
-let API_OA_HOST = 'https://api.oa.chainupeye.com'
+let API_OA_HOST = 'http://api.oa.chainupeye.com'
 
 const config = {
     API_OA_PREFIX: API_OA_PREFIX,
