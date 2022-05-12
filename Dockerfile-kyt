@@ -1,0 +1,6 @@
+FROM 172.26.26.134:10000/base/nginx
+
+WORKDIR /kyt
+COPY ./kyt/ /kyt
+COPY nginx.conf /etc/nginx/nginx.conf
+CMD ["nginx", "-g", "daemon off;"]

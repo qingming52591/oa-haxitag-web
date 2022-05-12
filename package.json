@@ -28,6 +28,7 @@
     "debug": "REACT_APP_ENV=mini craco start",
     "test": "REACT_APP_ENV=test craco test",
     "mini": "REACT_APP_ENV=mini craco build",
+    "kyt": "REACT_APP_ENV=kyt craco build",
     "zhaoli": "REACT_APP_ENV=zhaoli craco build"
   },
   "eslintConfig": {
