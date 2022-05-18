@@ -9,7 +9,7 @@ import {getUser} from "./user";
 
 export const getVideo = async () => {
     const state = store.getState()
-    let r = await axios.get(`${config.API_OA_BASE}/v1/video/list`, {headers: {token: state.user.info.token}})
+    let r = await axios.get(`${config.API_OA_BASE}/v1/video/list`, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         store.dispatch({type: actions.page.video.UPDATE, video: data.data.video})
@@ -19,7 +19,7 @@ export const getVideo = async () => {
 export const saveVideo = async (formData) => {
     const state = store.getState()
     let r = await axios.post(`${config.API_OA_BASE}/v1/video/save`, formData,
-        {headers: {token: state.user.info.token, 'Content-Type': 'multipart/form-data'}})
+        {headers: {Authorization: state.user.info.token, 'Content-Type': 'multipart/form-data'}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         await getVideo()
@@ -34,7 +34,7 @@ export const updateVideo = async (_id, fields, value) => {
         _id,
         fields,
         data: value
-    }, {headers: {token: state.user.info.token}})
+    }, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         store.dispatch({type: actions.user.content.UPDATE_FIELDS, _id: _id, fields, data: value})
@@ -45,7 +45,7 @@ export const updateVideo = async (_id, fields, value) => {
 // 删除
 export const deleteVideo = async (_id,) => {
     const state = store.getState()
-    let r = await axios.post(`${config.API_OA_BASE}/v1/video/delete?_id=${_id}`, {}, {headers: {token: state.user.info.token}})
+    let r = await axios.post(`${config.API_OA_BASE}/v1/video/delete?_id=${_id}`, {}, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         await getVideo()

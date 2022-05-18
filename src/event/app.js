@@ -10,7 +10,7 @@ import * as util from '../util'
 // 删除App
 export const deleteApp = async (app_id) => {
     const state = store.getState()
-    let r = await axios.post(`${config.API_OA_BASE}/v1/app/delete`, qs.stringify({app_id}), {headers: {token: state.user.info.token}})
+    let r = await axios.post(`${config.API_OA_BASE}/v1/app/delete`, qs.stringify({app_id}), {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         await getApp()
@@ -25,7 +25,7 @@ export const saveApp = async (formData) => {
     try {
         const state = store.getState()
         let push_data = {...formData}
-        let r = await axios.post(`${config.API_OA_BASE}/v1/app/save`, push_data, {headers: {token: state.user.info.token}})
+        let r = await axios.post(`${config.API_OA_BASE}/v1/app/save`, push_data, {headers: {Authorization: state.user.info.token}})
         let {headers, data} = http.getHttpHeardData(r)
         if (headers && data) {
             await getApp()
@@ -38,7 +38,7 @@ export const saveApp = async (formData) => {
 
 export const getApp = async () => {
     const state = store.getState()
-    let r = await axios.get(`${config.API_OA_BASE}/v1/app/list`, {headers: {token: state.user.info.token}})
+    let r = await axios.get(`${config.API_OA_BASE}/v1/app/list`, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         store.dispatch({type: actions.setting.app.UPDATE_APP, app: data.data.app})
@@ -47,7 +47,7 @@ export const getApp = async () => {
 
 export const getAppById = async (app_id) => {
     const state = store.getState()
-    let r = await axios.get(`${config.API_OA_BASE}/v1/app/${app_id}`, {headers: {token: state.user.info.token}})
+    let r = await axios.get(`${config.API_OA_BASE}/v1/app/${app_id}`, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         return data.data

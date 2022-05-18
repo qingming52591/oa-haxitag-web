@@ -31,7 +31,7 @@ export const getUser = async (user = false) => {
     if (user) {
 
     } else {
-        let r = await axios.get(`${config.API_OA_BASE}/v1/user/setting/list`, {headers: {token: state.user.info.token}})
+        let r = await axios.get(`${config.API_OA_BASE}/v1/user/setting/list`, {headers: {Authorization: state.user.info.token}})
         let {headers, data} = http.getHttpHeardData(r)
         if (headers && data) {
             store.dispatch({type: actions.setting.user.UPDATE_SETTING_USER, user: data.data.users})
@@ -40,7 +40,7 @@ export const getUser = async (user = false) => {
 }
 export const getGroupUser = async (group_id) => {
     const state = store.getState()
-    let r = await axios.get(`${config.API_OA_BASE}/v1/user/setting/group?group_id=${group_id}`, {headers: {token: state.user.info.token}})
+    let r = await axios.get(`${config.API_OA_BASE}/v1/user/setting/group?group_id=${group_id}`, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         return data.data.users
@@ -50,7 +50,7 @@ export const getGroupUser = async (group_id) => {
 export const saveUser = async (formData) => {
     const state = store.getState()
     let push_data = {...formData}
-    let r = await axios.post(`${config.API_OA_BASE}/v1/user/setting/save`, push_data, {headers: {token: state.user.info.token}})
+    let r = await axios.post(`${config.API_OA_BASE}/v1/user/setting/save`, push_data, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         await getUser()
@@ -61,7 +61,7 @@ export const saveUser = async (formData) => {
 export const password = async (formData) => {
     const state = store.getState()
     let push_data = {...formData, ...{pwd: util.getMd5(formData.pwd)}}
-    let r = await axios.post(`${config.API_OA_BASE}/v1/user/setting/pwd`, push_data, {headers: {token: state.user.info.token}})
+    let r = await axios.post(`${config.API_OA_BASE}/v1/user/setting/pwd`, push_data, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         return true
@@ -70,7 +70,7 @@ export const password = async (formData) => {
 
 export const deleteUser = async (uid) => {
     const state = store.getState()
-    let r = await axios.post(`${config.API_OA_BASE}/v1/user/setting/delete`, qs.stringify({uid}), {headers: {token: state.user.info.token}})
+    let r = await axios.post(`${config.API_OA_BASE}/v1/user/setting/delete`, qs.stringify({uid}), {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         await getUser()
@@ -81,7 +81,7 @@ export const deleteUser = async (uid) => {
 // 获取用户订阅的主题
 export const getUserTopic = async () => {
     const state = store.getState()
-    let r = await axios.get(`${config.API_OA_BASE}/v1/user/follow/topic`, {headers: {token: state.user.info.token}})
+    let r = await axios.get(`${config.API_OA_BASE}/v1/user/follow/topic`, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         return data.data.topics
@@ -90,7 +90,7 @@ export const getUserTopic = async () => {
 // 设置用户订阅的主题
 export const setUserTopic = async (opt, topic_id) => {
     const state = store.getState()
-    let r = await axios.post(`${config.API_OA_BASE}/v1/user/follow/topic`, {opt, topic_id}, {headers: {token: state.user.info.token}})
+    let r = await axios.post(`${config.API_OA_BASE}/v1/user/follow/topic`, {opt, topic_id}, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         return true

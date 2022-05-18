@@ -1,5 +1,5 @@
 let API_OA_PREFIX = 'oa-haxitag'
-let API_OA_HOST = 'http://127.0.0.1:9888'
+let API_OA_HOST = 'http://api.t.com:9080'
 
 const config = {
     API_OA_PREFIX: API_OA_PREFIX,

@@ -11,7 +11,7 @@ import * as g from '../g'
 // 获取site spider
 export const getSiteSpider = async (pagination) => {
     const state = store.getState()
-    let r = await axios.get(`${config.API_OA_BASE}/v1/spider/site/list?page_num=${pagination.current}&page_size=${pagination.pageSize}`, {headers: {token: state.user.info.token}})
+    let r = await axios.get(`${config.API_OA_BASE}/v1/spider/site/list?page_num=${pagination.current}&page_size=${pagination.pageSize}`, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         store.dispatch({type: actions.spider.site.UPDATE_SITE, site: data.data.feeds})
@@ -25,7 +25,7 @@ export const saveSiteSpider = async (_data, pagination) => {
 
     let r = await axios.post(`${config.API_OA_BASE}/v1/spider/site/save`, {..._data}, {
         headers: {
-            token: state.user.info.token
+            Authorization: state.user.info.token
         }
     })
     let {headers, data} = http.getHttpHeardData(r)
@@ -42,7 +42,7 @@ export const emit = async (_data, pagination) => {
 
     let r = await axios.post(`${config.API_OA_BASE}/v1/spider/site/emit`, {..._data}, {
         headers: {
-            token: state.user.info.token
+            Authorization: state.user.info.token
         }
     })
     let {headers, data} = http.getHttpHeardData(r)

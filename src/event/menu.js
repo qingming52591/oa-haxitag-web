@@ -8,7 +8,7 @@ import qs from 'qs'
 export const createMenu = async (formData) => {
     const state = store.getState()
     let push_data = {...formData}
-    let r = await axios.post(`${config.API_OA_BASE}/v1/menu/save`, push_data, {headers: {token: state.user.info.token}})
+    let r = await axios.post(`${config.API_OA_BASE}/v1/menu/save`, push_data, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         await getMenu()
@@ -20,7 +20,7 @@ export const createMenu = async (formData) => {
 // 删除菜单
 export const deleteMenu = async (menu_id) => {
     const state = store.getState()
-    let r = await axios.post(`${config.API_OA_BASE}/v1/menu/delete`, qs.stringify({menu_id}), {headers: {token: state.user.info.token}})
+    let r = await axios.post(`${config.API_OA_BASE}/v1/menu/delete`, qs.stringify({menu_id}), {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         await getMenu()
@@ -52,14 +52,14 @@ const buildMenu = (menu_data) => {
 export const getMenu = async (user = false) => {
     const state = store.getState()
     if (user) {
-        let r = await axios.get(`${config.API_OA_BASE}/v1/user/menu`, {headers: {token: state.user.info.token}})
+        let r = await axios.get(`${config.API_OA_BASE}/v1/user/menu`, {headers: {"Authorization": state.user.info.token}})
         let {headers, data} = http.getHttpHeardData(r)
         if (headers && data) {
             let user_menu = buildMenu(data.data.menu)
             store.dispatch({type: actions.user.menu.UPDATE_USER_MENU, user_menu: user_menu})
         }
     } else {
-        let r = await axios.get(`${config.API_OA_BASE}/v1/menu/list`, {headers: {token: state.user.info.token}})
+        let r = await axios.get(`${config.API_OA_BASE}/v1/menu/list`, {headers: {"Authorization": state.user.info.token}})
         let {headers, data} = http.getHttpHeardData(r)
         if (headers && data) {
             store.dispatch({type: actions.setting.menu.UPDATE_MENU, menu: data.data.menu})
@@ -70,7 +70,7 @@ export const getMenu = async (user = false) => {
 // 获取菜单组
 export const getMenuGroup = async () => {
     const state = store.getState()
-    let r = await axios.get(`${config.API_OA_BASE}/v1/menu/group/list`, {headers: {token: state.user.info.token}})
+    let r = await axios.get(`${config.API_OA_BASE}/v1/menu/group/list`, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         store.dispatch({type: actions.setting.menu_group.UPDATE_MENU_GROUP, menu_group: data.data.menu_group})
@@ -81,7 +81,7 @@ export const getMenuGroup = async () => {
 export const createMenuGroup = async (formData) => {
     const state = store.getState()
     let push_data = {...formData}
-    let r = await axios.post(`${config.API_OA_BASE}/v1/menu/group/save`, push_data, {headers: {token: state.user.info.token}})
+    let r = await axios.post(`${config.API_OA_BASE}/v1/menu/group/save`, push_data, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         await getMenuGroup()
@@ -96,7 +96,7 @@ export const menuGroupUpdate = async (_id, fields, value) => {
         _id,
         fields,
         data: value
-    }, {headers: {token: state.user.info.token}})
+    }, {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         store.dispatch({type: actions.setting.menu_group.UPDATE_FIELDS, _id: _id, fields, data: value})
@@ -107,7 +107,7 @@ export const menuGroupUpdate = async (_id, fields, value) => {
 // 删除菜单组
 export const deleteMenuGroup = async (menu_group_id) => {
     const state = store.getState()
-    let r = await axios.post(`${config.API_OA_BASE}/v1/menu/group/delete`, qs.stringify({menu_group_id}), {headers: {token: state.user.info.token}})
+    let r = await axios.post(`${config.API_OA_BASE}/v1/menu/group/delete`, qs.stringify({menu_group_id}), {headers: {Authorization: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         await getMenuGroup()
