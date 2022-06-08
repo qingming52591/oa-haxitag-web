@@ -6,7 +6,7 @@ const config = {
     API_OA_HOST: API_OA_HOST,
     API_OA_BASE: `${API_OA_HOST}/${API_OA_PREFIX}`,
     VIDEO_BASE: 'http://oa-kyt-api.yueli.com',
-    TITLE: '阅粒智能知识系统',
+    TITLE: 'ChainUPeye OA',
     DEBUG: false
 }
 export default config

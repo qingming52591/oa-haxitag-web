@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "REACT_APP_ENV=dev craco start",
-    "debug": "REACT_APP_ENV=mini craco start",
+    "debug": "REACT_APP_ENV=kyt craco start",
     "test": "REACT_APP_ENV=test craco test",
     "mini": "REACT_APP_ENV=mini craco build",
     "kyt": "REACT_APP_ENV=kyt craco build",
