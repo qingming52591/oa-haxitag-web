@@ -23,7 +23,7 @@ export const getContent = async (pagination, topic = '', type = '') => {
 export const getTopicContent = async (pagination, topic = []) => {
     const state = store.getState()
     let r = await axios.post(`${config.API_OA_BASE}/v1/contents/topic/list?page_num=${pagination.current}&page_size=${pagination.pageSize}`,
-        {topic}, {headers: {Authorization: state.user.info.token}})
+        {topic}, {headers: {token: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         store.dispatch({type: actions.user.content.UPDATE_CONTENTS, contents: data.data.contents})
@@ -42,7 +42,7 @@ export const saveContent = async (type, _data, topic = [], pagination = null) =>
 
     let r = await axios.post(`${config.API_OA_BASE}/v1/contents/save`, formData, {
         headers: {
-            Authorization: state.user.info.token,
+            token: state.user.info.token,
             'Content-Type': 'multipart/form-data'
         }
     })
@@ -62,7 +62,7 @@ export const updateContent = async (_id, fields, value) => {
         _id,
         fields,
         data: value
-    }, {headers: {Authorization: state.user.info.token}})
+    }, {headers: {token: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         store.dispatch({type: actions.user.content.UPDATE_FIELDS, _id: _id, fields, data: value})
@@ -73,7 +73,7 @@ export const updateContent = async (_id, fields, value) => {
 // 删除
 export const deleteContent = async (_id, pagination) => {
     const state = store.getState()
-    let r = await axios.post(`${config.API_OA_BASE}/v1/contents/delete?_id=${_id}`, {}, {headers: {Authorization: state.user.info.token}})
+    let r = await axios.post(`${config.API_OA_BASE}/v1/contents/delete?_id=${_id}`, {}, {headers: {token: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r)
     if (headers && data) {
         await getContent(pagination)
