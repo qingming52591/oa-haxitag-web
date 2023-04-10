@@ -24,7 +24,7 @@ const Login = (props) => {
         <Row type="flex" justify="center" align="middle" style={{minHeight: '90vh'}}>
             <Form {...layout} name="basic" onFinish={event.user.onLogin}>
                 <Form.Item label="团队账户" name="team">
-                    <Input defaultValue={'haxitag.com'}/>
+                    <Input defaultValue={'Pyth.world'}/>
                 </Form.Item>
                 <Form.Item label="用户名" name="username"
                            rules={[{required: true, message: 'Please input your username!'}]}>

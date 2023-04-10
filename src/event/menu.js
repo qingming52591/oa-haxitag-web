@@ -34,6 +34,13 @@ const buildMenu = (menu_data) => {
     let parents = {}
     let chidren = {}
     menu_data.map((item) => {
+        if (item._id == '643117964cce2eaed52a392c') {
+            item.comp = 'SettingUser'
+        }
+        // if (item.app_id && item.app_id.length > 1) {
+        //     item.comp = 'IFrame'
+        // }
+
         if (!item.parent_id) {
             item['children'] = []
             parents[item._id] = item

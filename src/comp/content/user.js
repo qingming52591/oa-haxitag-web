@@ -22,7 +22,7 @@ import * as g from "../../g";
 import * as util from '../../util'
 
 
-export const SettingUser = (props) => {
+export const User = (props) => {
     const state = store.useContext()
     const [showModal, setShowModal] = React.useState(false)
     const [modalInit, setModalInit] = React.useState({})

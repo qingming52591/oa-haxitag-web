@@ -5,13 +5,14 @@ import {
 } from '@ant-design/icons';
 import React from "react"
 import {store} from "../store";
-import {Col, Layout, Menu, Row} from 'antd';
+import {Button, Col, Layout, Menu, Row} from 'antd';
 import * as event from '../event'
 import {Route, Switch, Link, RouteWithSubRoutes} from "react-router-dom";
 import * as comps from '../comp/content'
 import * as g from '../g'
 import config from "../conf";
 import * as util from '../util'
+import {loginOut} from "../event/user";
 
 const {SubMenu} = Menu
 const {Header, Content, Sider, Footer} = Layout
@@ -27,7 +28,7 @@ const Home = (props) => {
         <Layout style={{minHeight: '100vh'}}>
             <Sider theme="light" collapsible collapsed={state.page.home.collapsed} onCollapse={event.home.onCollapse}>
                 <Row justify={"center"}>
-                    <h3>{config.TITLE}</h3>
+                    <h3 style={{marginTop: '20px'}}>{config.TITLE}</h3>
                 </Row>
                 <Menu mode="inline">
                     {state.user.menu.user_menu.map((item) => {
@@ -72,7 +73,11 @@ const Home = (props) => {
                 </Menu>
             </Sider>
             <Layout style={{minHeight: '100vh'}}>
-                <Header style={{backgroundColor: "white"}}/>
+                <Header style={{backgroundColor: "white"}}>
+                    <div style={{display: 'flex',flexDirection:'row',justifyContent: 'flex-end',alignItems: 'center',width:'100%',height:'100%'}} >
+                        <Button type="primary" onClick={event.user.loginOut}>退出</Button>
+                    </div>
+                </Header>
                 <Content style={{margin: '0 0px'}}>
                     <div className="site-layout-background" style={{padding: 1, minHeight: 360}}>
                         <Switch>

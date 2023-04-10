@@ -5,6 +5,7 @@ import * as http from "../util/http";
 import * as g from '../g'
 import * as util from '../util'
 import qs from 'qs'
+import md5 from "md5";
 
 // 登录
 export const onLogin = async (formData) => {
@@ -24,6 +25,11 @@ export const onLogin = async (formData) => {
             store.dispatch({type: actions.user.info.UPDATE_TOKEN, token: token})
         }
     }
+}
+// 退出登录
+export const loginOut = async (formData) => {
+     window.sessionStorage.removeItem(g.user.TOKEN)
+     window.location.reload()
 }
 
 export const getUser = async (user = false) => {
