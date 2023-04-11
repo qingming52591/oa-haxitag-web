@@ -17,35 +17,39 @@ export const IFrame = (props) => {
     }, [props.match.params.app_id])
 
     return (
-        <div id='IframeInhorBox'>
-            <Iframe url={(() => {
-                let url = app.enter
-                if (app.enter.indexOf("?") === -1) {
-                    url = url + '?jwt=' + state.user.info.token
-                } else {
-                    url = url + '&jwt=' + state.user.info.token
-                }
-                return url
-            })()}
-                    id='iframe'
-                    frameBorder={0}
-                    position="absolute"
-                    width={'86%'}
-                    height={'100%'}
-                    display="initial"
-                    // onLoad={() => {
-                    //     let doc = document.getElementById("iframe").contentWindow.document.getElementsByTagName("body")[0];
-                    //     let dom = document.getElementById('IframeInhorBox');
-                    //     let x = dom.scrollWidth / doc.scrollWidth;
-                    //     this.setState({
-                    //         iwidth: dom.scrollWidth / x + 'px',
-                    //         iheight: doc.scrollHeight + 'px',
-                    //         itransform: x,
-                    //         itransformOrigin: '0 0',
-                    //     })
-                    //     document.getElementById('IframeInhorBox').style.height = doc.scrollHeight * x + 'px';
-                    // }}
-            />
+        <div  id='IframeInhorBox'>
+            {
+                app && app.enter ?(
+                    <Iframe url={(() => {
+                        let url = app.enter
+                        if (app.enter.indexOf("?") === -1) {
+                            url = url + '?jwt=' + state.user.info.token
+                        } else {
+                            url = url + '&jwt=' + state.user.info.token
+                        }
+                        return url
+                    })()}
+                            id='iframe'
+                            frameBorder={0}
+                            position="absolute"
+                            width={'86%'}
+                            height={'100%'}
+                            display="initial"
+                        // onLoad={() => {
+                        //     let doc = document.getElementById("iframe").contentWindow.document.getElementsByTagName("body")[0];
+                        //     let dom = document.getElementById('IframeInhorBox');
+                        //     let x = dom.scrollWidth / doc.scrollWidth;
+                        //     this.setState({
+                        //         iwidth: dom.scrollWidth / x + 'px',
+                        //         iheight: doc.scrollHeight + 'px',
+                        //         itransform: x,
+                        //         itransformOrigin: '0 0',
+                        //     })
+                        //     document.getElementById('IframeInhorBox').style.height = doc.scrollHeight * x + 'px';
+                        // }}
+                    />
+                ):null
+            }
         </div>
     )
 }
