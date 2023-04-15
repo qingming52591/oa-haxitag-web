@@ -56,8 +56,8 @@ export const EditTakeNotes = (props) => {
                         //             oneFlag: 'one' }
                         // }
                         // )
-                        util.goPage('/search',{kw:'Claude 能够做到实时搜索吗？-from claude'})
-                        return
+                        // util.goPage('/search',{kw:'Claude 能够做到实时搜索吗？-from claude'})
+                        // return
                         if (!title) {
                             message.error('标题不能为空！')
                             return
