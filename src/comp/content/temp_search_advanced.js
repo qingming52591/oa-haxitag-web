@@ -2,7 +2,8 @@ import {Select, Space, Button, Form, Input, Row, Radio, message, Empty, Col, Ima
 import {MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import React from 'react'
 import * as event from '../../event'
-import * as util from '../../util'
+import * as util from "../../util";
+
 
 const add_search_condition = (form, field, index, add, remove) => {
     return (
@@ -114,6 +115,35 @@ export const Search = (props) => {
     const onFinish = values => {
         console.log('Received values of form:', values);
     };
+
+    React.useEffect(() => {
+        (async () => {
+            if (props.location.state && props.location.state.kw) {
+                form.setFieldsValue({search:props.location.state.kw});
+                let r = await event.search.search(`kw=${props.location.state.kw}`)
+                if (r) {
+                    let s_r = []
+                    let s_kw = []
+                    r.data.result.map(async (item, index) => {
+                        let keywords = item.label.split(' ')
+                        s_r.push({
+                            title: item.title,
+                            summary: item.content,
+                            url: item.article_url,
+                            keywords: keywords
+                        })
+                        s_kw = s_kw.concat(keywords.filter(temp => temp.length > 0).slice(0, 6))
+                        return item
+                    })
+                    setData(s_r)
+                    s_kw = Array.from(new Set(s_kw))
+                    setKw(s_kw)
+                    setSubData([])
+                }
+            }
+        })()
+    }, [])
+
 
     return (
         <div>
@@ -231,7 +261,7 @@ export const Search = (props) => {
                 </Form>
             </Row>
             <Row justify={"center"}>
-                <Col span={10}>
+                <Col span={24}>
                     {data.map((item) => {
                         return (
                             <Card style={{margin: "0 50px"}}>
@@ -242,6 +272,57 @@ export const Search = (props) => {
                                         <a href={item.url}
                                            target={"_blank"}>{item.title.replaceAll('<b>', '').replaceAll('</b>', '')}</a>
                                         <div>{item.summary.substr(0, 200)}</div>
+                                        <div>
+                                            {
+                                                item.keywords.map((tag) => {
+                                                        let style = {margin: 5}
+                                                        // if (selectKw.includes(tag)) {
+                                                        //     style = {...style, ...{backgroundColor: "red"}}
+                                                        // }
+                                                        return <Tag style={style} onClick={async () => {
+                                                            util.goPage('/search',{kw:tag})
+
+                                                            // form.setFieldsValue({search:tag});
+
+                                                            // {
+                                                            //     let s_r = []
+                                                            //     let s_kw = []
+                                                            //     r.data.result.map(async (item, index) => {
+                                                            //         let keywords = item.label.split(' ')
+                                                            //         s_r.push({
+                                                            //             title: item.title,
+                                                            //             summary: item.content,
+                                                            //             url: item.article_url,
+                                                            //             keywords: keywords
+                                                            //         })
+                                                            //         s_kw = s_kw.concat(keywords.filter(temp => temp.length > 0).slice(0, 6))
+                                                            //         return item
+                                                            //     })
+                                                            //     setData(s_r)
+                                                            //     s_kw = Array.from(new Set(s_kw))
+                                                            //     setKw(s_kw)
+                                                            //     setSubData([])
+                                                            // }
+
+
+                                                            // let rr = await event.search.search(`kw=${tag}`)
+                                                            // let s_rr = []
+                                                            // let s_kw = []
+                                                            // rr.data.result.map(temp => {
+                                                            //     let keywords = temp.label.split(' ')
+                                                            //     s_rr.push({
+                                                            //         title: temp.title,
+                                                            //         summary: temp.content,
+                                                            //         url: temp.article_url,
+                                                            //         keywords: keywords
+                                                            //     })
+                                                            // })
+                                                            // setData(s_rr)
+                                                        }}>{tag}</Tag>
+                                                    }
+                                                )
+                                            }
+                                        </div>
                                     </Space>
                                 </Row>
                             </Card>
@@ -251,48 +332,48 @@ export const Search = (props) => {
                         <Pagination defaultCurrent={1} total={500}/>
                     </Row> : null}
                 </Col>
-                <Col span={6}>
-                    <div style={{backgroundColor: "#fff", marginRight: 50}}>
-                        <div>
-                            {
-                                kw.map((tag) => {
-                                        let style = {margin: 5}
-                                        if (selectKw.includes(tag)) {
-                                            style = {...style, ...{backgroundColor: "red"}}
-                                        }
-                                        return <Tag style={style} onClick={async () => {
-                                            let rr = await event.search.search(`kw=${tag}`)
-                                            let s_rr = []
-                                            rr.data.result.map(temp => {
-                                                s_rr.push({
-                                                    title: temp.title,
-                                                    summary: temp.content,
-                                                    url: temp.article_url
-                                                })
-                                            })
-                                            setSubData(s_rr)
-                                        }}>{tag}</Tag>
-                                    }
-                                )
-                            }
-                        </div>
-                    </div>
-                </Col>
-                <Col span={8}>
-                    {subData.map((item) => {
-                        return (
-                            <Card style={{marginRight: 50}}>
-                                <Row>
-                                    <Space direction={"vertical"}>
-                                        <a href={item.url}
-                                           target={"_blank"}>{item.title.replaceAll('<b>', '').replaceAll('</b>', '')}</a>
-                                        <div>{item.summary.substr(0, 200)}</div>
-                                    </Space>
-                                </Row>
-                            </Card>
-                        )
-                    })}
-                </Col>
+                {/*<Col span={6}>*/}
+                {/*    <div style={{backgroundColor: "#fff", marginRight: 50}}>*/}
+                {/*        <div>*/}
+                {/*            {*/}
+                {/*                kw.map((tag) => {*/}
+                {/*                        let style = {margin: 5}*/}
+                {/*                        if (selectKw.includes(tag)) {*/}
+                {/*                            style = {...style, ...{backgroundColor: "red"}}*/}
+                {/*                        }*/}
+                {/*                        return <Tag style={style} onClick={async () => {*/}
+                {/*                            let rr = await event.search.search(`kw=${tag}`)*/}
+                {/*                            let s_rr = []*/}
+                {/*                            rr.data.result.map(temp => {*/}
+                {/*                                s_rr.push({*/}
+                {/*                                    title: temp.title,*/}
+                {/*                                    summary: temp.content,*/}
+                {/*                                    url: temp.article_url*/}
+                {/*                                })*/}
+                {/*                            })*/}
+                {/*                            setSubData(s_rr)*/}
+                {/*                        }}>{tag}</Tag>*/}
+                {/*                    }*/}
+                {/*                )*/}
+                {/*            }*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*</Col>*/}
+                {/*<Col span={12}>*/}
+                {/*    {subData.map((item) => {*/}
+                {/*        return (*/}
+                {/*            <Card style={{marginRight: 50}}>*/}
+                {/*                <Row>*/}
+                {/*                    <Space direction={"vertical"}>*/}
+                {/*                        <a href={item.url}*/}
+                {/*                           target={"_blank"}>{item.title.replaceAll('<b>', '').replaceAll('</b>', '')}</a>*/}
+                {/*                        <div>{item.summary.substr(0, 200)}</div>*/}
+                {/*                    </Space>*/}
+                {/*                </Row>*/}
+                {/*            </Card>*/}
+                {/*        )*/}
+                {/*    })}*/}
+                {/*</Col>*/}
             </Row>
         </div>
     )

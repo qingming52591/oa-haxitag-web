@@ -11,7 +11,7 @@ import {
     Avatar,
     Select,
     Checkbox,
-    InputNumber
+    InputNumber, message
 } from "antd";
 import * as event from "../../event";
 import React from 'react'
@@ -20,6 +20,7 @@ import 'braft-editor/dist/index.css'
 import BraftEditor from 'braft-editor'
 import * as util from '../../util'
 import * as g from '../../g'
+import {goPage, replace} from "../../util";
 
 export const EditTakeNotes = (props) => {
     const [editor, setEditor] = React.useState(BraftEditor.createEditorState(''))
@@ -49,6 +50,22 @@ export const EditTakeNotes = (props) => {
                 <Row></Row>
                 <Row justify="end">
                     <Button type={"primary"} onClick={async (e) => {
+                        // this.props.history.push({
+                        //         pathname:'/search',
+                        //         state: {
+                        //             oneFlag: 'one' }
+                        // }
+                        // )
+                        util.goPage('/search',{kw:'Claude 能够做到实时搜索吗？-from claude'})
+                        return
+                        if (!title) {
+                            message.error('标题不能为空！')
+                            return
+                        }
+                        if (!editor.toText()) {
+                            message.error('内容不能为空！')
+                            return
+                        }
                         if (id) {
                             await event.content.updateContent(id, 'title', title)
                             await event.content.updateContent(id, 'content', editor.toText())
@@ -60,7 +77,8 @@ export const EditTakeNotes = (props) => {
                                 note_html: editor.toHTML()
                             }))
                         }
-                        util.goPage('/menu/take_notes')
+                        // util.goPage('/menu/take_notes')
+                        util.replace('/home')
                     }}>保存</Button>
                 </Row>
             </Row>

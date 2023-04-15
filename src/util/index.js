@@ -7,10 +7,28 @@ const md5 = require('md5')
 
 export const history = createBrowserHistory()
 
-export const goPage = (path) => {
-    history.push(path)
+export const goPage = (path,params) => {
+    history.push({
+        pathname:path,
+        state:params
+    })
     history.go()
 }
+
+export const backPage = () => {
+    history.go(-1)
+}
+export const replace = (path) => {
+    history.replace(path)
+    history.go()
+}
+
+export const paramsState = () => {
+    const { query = {} } = history.props;
+
+    return  query
+}
+
 export const log = (msg, debug = false) => {
     if (config.DEBUG || debug) {
         console.log(msg)

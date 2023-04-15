@@ -175,6 +175,7 @@ export const Knowledge = (props) => {
                 <Row>
                     <div style={{width: "100%"}}>
                         <Divider orientation={'left'}>问题</Divider>
+
                         <span onDoubleClick={(e) => {
                             setQEdit(true)
                         }}>
@@ -221,6 +222,11 @@ export const Knowledge = (props) => {
                                 }
                             })()}
                         </span>
+                        <div style={{display:'flex',justifyContent:'flex-end'}}>
+                            <Button onClick={async e => {
+                                setQEdit(true)
+                            }}>编辑</Button>
+                        </div>
                         <Divider orientation={'left'}>答案</Divider>
                         <span onDoubleClick={(e) => {
                             setAEdit(true)
@@ -270,6 +276,11 @@ export const Knowledge = (props) => {
                                 }
                             })()}
                         </span>
+                        <div style={{display:'flex',justifyContent:'flex-end'}}>
+                            <Button onClick={async e => {
+                                setAEdit(true)
+                            }}>编辑</Button>
+                        </div>
                     </div>
                     <Divider orientation={'left'}>实体</Divider>
                     {(() => {
