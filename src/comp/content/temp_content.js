@@ -103,7 +103,7 @@ const AddContent = ({type}) => {
     } else if (type === g.content_type.docs) {
         return <div>
             <Upload
-                // multiple
+                multiple
                 accept=".doc,.pdf"
                 listType="picture-card"
                 fileList={docs}
@@ -698,12 +698,12 @@ export const Content = (props) => {
                         <Tabs.TabPane tab="图片" key={g.content_type.img}>
                             <AddContent type={g.content_type.img}/>
                         </Tabs.TabPane>
-                        <Tabs.TabPane tab="音频" key={g.content_type.audio}>
-                            <AddContent type={g.content_type.audio}/>
-                        </Tabs.TabPane>
-                        <Tabs.TabPane tab="视频" key={g.content_type.video}>
-                            <AddContent type={g.content_type.video}/>
-                        </Tabs.TabPane>
+                        {/*<Tabs.TabPane tab="音频" key={g.content_type.audio}>*/}
+                        {/*    <AddContent type={g.content_type.audio}/>*/}
+                        {/*</Tabs.TabPane>*/}
+                        {/*<Tabs.TabPane tab="视频" key={g.content_type.video}>*/}
+                        {/*    <AddContent type={g.content_type.video}/>*/}
+                        {/*</Tabs.TabPane>*/}
                     </Tabs>
                     <Modal
                         visible={imgs.previewVisible}
