@@ -157,24 +157,23 @@ export const Search = (props) => {
                                 size="large"
                                 onSearch={async () => {
                                     let kw = form.getFieldValue('search')
-                                    let r = await event.search.search(`kw=${kw}`)
+                                    let r = await event.search.search(`keywords=${kw}`)
                                     if (r) {
                                         let s_r = []
-                                        let s_kw = []
-                                        r.data.result.map(async (item, index) => {
-                                            let keywords = item.label.split(' ')
+                                        r.data.hits.map(async (item, index) => {
+                                            let keywords = item.label
                                             s_r.push({
+                                                id:item.id,
                                                 title: item.title,
-                                                summary: item.content,
+                                                summary: item.summary || item.content,
+                                                entity:item.entity || [],
                                                 url: item.article_url,
                                                 keywords: keywords
                                             })
-                                            s_kw = s_kw.concat(keywords.filter(temp => temp.length > 0).slice(0, 6))
                                             return item
                                         })
                                         setData(s_r)
-                                        s_kw = Array.from(new Set(s_kw))
-                                        setKw(s_kw)
+                                        setKw([])
                                         setSubData([])
                                     }
                                 }}
@@ -182,9 +181,9 @@ export const Search = (props) => {
                             />
 
                         </Form.Item>
-                        <Button onClick={(e) => {
-                            setAdvance(advance ? false : true)
-                        }} type={"link"}>高级搜索</Button>
+                        {/*<Button onClick={(e) => {*/}
+                        {/*    setAdvance(advance ? false : true)*/}
+                        {/*}} type={"link"}>高级搜索</Button>*/}
                     </Space>
                     <Form.Item noStyle shouldUpdate>
                         {(ins) => {
@@ -274,6 +273,17 @@ export const Search = (props) => {
                                         <div>{item.summary.substr(0, 200)}</div>
                                         <div>
                                             {
+                                                item.entity.map((tag) => {
+                                                        let style = {margin: 5, color:'#1890ff',borderColor:'#1890ff'}
+                                                        return <Tag style={style} onClick={async () => {
+                                                            util.goPage('/search',{kw:tag})
+                                                        }}>{tag}</Tag>
+                                                    }
+                                                )
+                                            }
+                                        </div>
+                                        <div>
+                                            {
                                                 item.keywords.map((tag) => {
                                                         let style = {margin: 5}
                                                         // if (selectKw.includes(tag)) {
@@ -328,9 +338,9 @@ export const Search = (props) => {
                             </Card>
                         )
                     })}
-                    {data.length ? <Row justify={'center'} style={{marginTop: "10px"}}>
-                        <Pagination defaultCurrent={1} total={500}/>
-                    </Row> : null}
+                    {/*{data.length ? <Row justify={'center'} style={{marginTop: "10px"}}>*/}
+                    {/*    <Pagination defaultCurrent={1} total={500}/>*/}
+                    {/*</Row> : null}*/}
                 </Col>
                 {/*<Col span={6}>*/}
                 {/*    <div style={{backgroundColor: "#fff", marginRight: 50}}>*/}
