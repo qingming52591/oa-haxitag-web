@@ -116,6 +116,9 @@ const AddContent = ({type}) => {
                         message.error('文件数量不可大于5个')
                     }
                 }}
+                beforeUpload={file => {
+                    return false
+                }}
                 onRemove={(file) => {
                 }}
             >
@@ -127,6 +130,7 @@ const AddContent = ({type}) => {
                     return false
                 }
                 let waits = docs.map((item) => {
+                    debugger
                     return event.content.saveContent(item.originFileObj.type.split('/').pop(), item.originFileObj)
                 })
                 await Promise.all(waits)
