@@ -120,7 +120,7 @@ export const Search = (props) => {
         (async () => {
             if (props.location.state && props.location.state.kw) {
                 form.setFieldsValue({search:props.location.state.kw});
-                let r = await event.search.search(`kw=${props.location.state.kw}`)
+                let r = await event.search.search(`keywords=${props.location.state.kw}`)
                 if (r) {
                     let s_r = []
                     let s_kw = []
@@ -128,7 +128,7 @@ export const Search = (props) => {
                         let keywords = item.label.split(' ')
                         s_r.push({
                             title: item.title,
-                            summary: item.content,
+                            summary: item.summary || item.content,
                             url: item.article_url,
                             keywords: keywords
                         })
@@ -270,7 +270,7 @@ export const Search = (props) => {
                                     <Space direction={"vertical"}>
                                         <a href={item.url}
                                            target={"_blank"}>{item.title.replaceAll('<b>', '').replaceAll('</b>', '')}</a>
-                                        <div>{item.summary.substr(0, 200)}</div>
+                                        <div>{ item.summary && item.summary.substr(0, 200)}</div>
                                         <div>
                                             {
                                                 item.entity.map((tag) => {
