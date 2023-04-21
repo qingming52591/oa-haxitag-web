@@ -27,6 +27,7 @@ import test_img from '../../imgs/7777.png'
 import {store} from "../../store";
 import {re} from '../../util/re'
 import * as time from "../../util/time";
+import BraftEditor from "braft-editor";
 
 function getBase64(file, callback) {
     const reader = new FileReader();
@@ -88,7 +89,62 @@ const AddContent = ({type}) => {
     const [docs, setDocs] = React.useState([])
     const [imgs, setImgs] = React.useState([])
     const [audios, setAudios] = React.useState([])
-    if (type === g.content_type.url) {
+
+    const [editor, setEditor] = React.useState(BraftEditor.createEditorState(''))
+    const [title, setTitle] = React.useState('')
+    const [id, setId] = React.useState(null)
+
+    if (type === g.content_type.note) {
+        return  <>
+            <Row style={{"background-color": "#fff", margin: 10}}>
+                <Row type="flex" justify='center' style={{width: '70%', margin: 10}}>
+                    <Input placeholder={"请输入笔记标题"} value={title} onChange={e => setTitle(e.target.value)}/>
+                </Row>
+                <Row>
+                    <BraftEditor value={editor}
+                                 onChange={(editorState => {
+                                     setEditor(editorState)
+                                 })}
+                                 excludeControls={['media']}
+                    />
+                </Row>
+                <Row></Row>
+                <Row justify="end">
+                    <Button type={"primary"} onClick={async (e) => {
+                        // this.props.history.push({
+                        //         pathname:'/search',
+                        //         state: {
+                        //             oneFlag: 'one' }
+                        // }
+                        // )
+                        // util.goPage('/search',{kw:'Claude 能够做到实时搜索吗？-from claude'})
+                        // return
+                        if (!title) {
+                            message.error('标题不能为空！')
+                            return
+                        }
+                        if (!editor.toText()) {
+                            message.error('内容不能为空！')
+                            return
+                        }
+                        if (id) {
+                            await event.content.updateContent(id, 'title', title)
+                            await event.content.updateContent(id, 'content', editor.toText())
+                            await event.content.updateContent(id, 'content_html', editor.toHTML())
+                        } else {
+                            await event.content.saveContent(g.content_type.note, JSON.stringify({
+                                title: title,
+                                note_text: editor.toText(),
+                                note_html: editor.toHTML()
+                            }))
+                        }
+                        // util.goPage('/menu/take_notes')
+                        util.replace('/home')
+                    }}>保存</Button>
+                </Row>
+            </Row>
+        </>
+    } else if (type === g.content_type.url) {
         return <div>
             <Input ref={refUrl} type={'url'}/>
             <Button style={{marginTop: 10}} onClick={async (e) => {
@@ -130,7 +186,6 @@ const AddContent = ({type}) => {
                     return false
                 }
                 let waits = docs.map((item) => {
-                    debugger
                     return event.content.saveContent(item.originFileObj.type.split('/').pop(), item.originFileObj)
                 })
                 await Promise.all(waits)
@@ -693,6 +748,9 @@ export const Content = (props) => {
                 <Collapse.Panel collapsible={'disabled'} showArrow={false} header="添加内容" key={'1'}>
                     <Tabs defaultActiveKey="1" onChange={() => {
                     }}>
+                        <Tabs.TabPane tab="写笔记" key={g.content_type.note}>
+                            <AddContent type={g.content_type.note}/>
+                        </Tabs.TabPane>
                         <Tabs.TabPane tab="网页" key={g.content_type.url}>
                             <AddContent type={g.content_type.url}/>
                         </Tabs.TabPane>

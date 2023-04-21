@@ -105,10 +105,10 @@ export const Feeds = (props) => {
                 <List.Item
                     key={item.title}
                     actions={[
-                        <IconText icon={TagOutlined} text={item.come_from} key="1"/>,
-                        <IconText icon={StarOutlined} text="156" key="2"/>,
-                        <IconText icon={LikeOutlined} text="156" key="3"/>,
-                        <IconText icon={MessageOutlined} text="2" key="4"/>,
+                        // <IconText icon={TagOutlined} text={item.come_from} key="1"/>,
+                        // <IconText icon={StarOutlined} text="156" key="2"/>,
+                        // <IconText icon={LikeOutlined} text="156" key="3"/>,
+                        // <IconText icon={MessageOutlined} text="2" key="4"/>,
                     ]}
                     extra={getImg(item)}
                 >
