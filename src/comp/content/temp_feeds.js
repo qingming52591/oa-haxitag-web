@@ -6,7 +6,8 @@ import {MessageOutlined, LikeOutlined, StarOutlined, TagOutlined} from '@ant-des
 import zongjingban from '../../imgs/zongjingban.png'
 import hr from '../../imgs/hr.jpeg'
 import {store} from "../../store";
-
+import {goPage} from "../../util";
+import * as util from "util";
 
 export const Feeds = (props) => {
     const state = store.useContext();
@@ -114,8 +115,14 @@ export const Feeds = (props) => {
                 >
                     <List.Item.Meta
                         // avatar={<Avatar src={item.avatar}/>}
-                        title={<a target={"_blank"} href={item.path}>{item.title}</a>}
+                        title={<a target={"_blank"}     onClick={ async() => {
+                            goPage('/note/write',{_id: item._id, title: item.title, content_html: item.content_html});
+                        }} >{item.title}</a>}
                     />
+                    {/*<Link to={{*/}
+                    {/*    pathname: '/note/write',*/}
+                    {/*    state: {_id: item._id, title: item.title, content_html: item.content_html}*/}
+                    {/*}}>{item.title}</Link>*/}
                     {item.yl_summary}
                 </List.Item>
             )}
