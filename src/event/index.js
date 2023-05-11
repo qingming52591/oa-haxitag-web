@@ -9,6 +9,7 @@ import * as recommend from './recommend'
 import * as siteSpider from './site_spider'
 import * as topic from './topic'
 import * as qa from './qa'
+import * as manageApi from  './manage_api'
 
 export {
     home,
@@ -21,5 +22,6 @@ export {
     recommend,
     siteSpider,
     topic,
-    qa
+    qa,
+    manageApi
 }

@@ -8,7 +8,7 @@ export const getHttpHeardData = (resp, update_token = true) => {
     let result = {headers: null, data: null}
     if (resp.status === 200) {
         util.log(resp)
-        if (resp.data.code === g.code.success) {
+        if (resp.data.code === g.code.success || resp.data.error_code === g.code.success) {
             if (update_token) {
                 store.dispatch({type: actions.user.info.UPDATE_TOKEN, token: resp.headers.token})
             }

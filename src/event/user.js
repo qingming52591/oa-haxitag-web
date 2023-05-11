@@ -19,7 +19,10 @@ export const onLogin = async (formData) => {
                     ...formData,
                     ...{"password": md5(formData.password)}
                 })
-                http.getHttpHeardData(r)
+                let {data} = http.getHttpHeardData(r)
+                if (data && data.data.user && data.data.user._id) {
+                    window.sessionStorage.setItem(g.user.UID,data.data.user._id)
+                }
             }
         } else {
             store.dispatch({type: actions.user.info.UPDATE_TOKEN, token: token})
@@ -29,6 +32,7 @@ export const onLogin = async (formData) => {
 // 退出登录
 export const loginOut = async (formData) => {
      window.sessionStorage.removeItem(g.user.TOKEN)
+    window.sessionStorage.removeItem(g.user.UID)
      window.location.reload()
 }
 
