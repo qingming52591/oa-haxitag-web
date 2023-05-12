@@ -2,7 +2,8 @@ import produce from "immer";
 
 // initState
 export const state = {
-    user: []
+    user: [],
+    userMap:{}
 }
 
 // action
@@ -16,6 +17,9 @@ export const reducer = (state, nowAction) => {
         case action.UPDATE_SETTING_USER:
             let newState = produce(state, (draft) => {
                 draft.user = nowAction.user
+                nowAction.user.map((item)=>{
+                    draft.userMap[item._id] = item.username
+                })
             })
             return newState
         default:

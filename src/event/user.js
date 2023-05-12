@@ -22,6 +22,7 @@ export const onLogin = async (formData) => {
                 let {data} = http.getHttpHeardData(r)
                 if (data && data.data.user && data.data.user._id) {
                     window.sessionStorage.setItem(g.user.UID,data.data.user._id)
+                    window.sessionStorage.setItem(g.user.UName,data.data.user.username)
                 }
             }
         } else {
@@ -32,7 +33,8 @@ export const onLogin = async (formData) => {
 // 退出登录
 export const loginOut = async (formData) => {
      window.sessionStorage.removeItem(g.user.TOKEN)
-    window.sessionStorage.removeItem(g.user.UID)
+     window.sessionStorage.removeItem(g.user.UID)
+     window.sessionStorage.removeItem(g.user.UName)
      window.location.reload()
 }
 

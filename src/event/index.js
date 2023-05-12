@@ -10,6 +10,7 @@ import * as siteSpider from './site_spider'
 import * as topic from './topic'
 import * as qa from './qa'
 import * as manageApi from  './manage_api'
+import * as managePrompt from './prompt_api'
 
 export {
     home,
@@ -23,5 +24,6 @@ export {
     siteSpider,
     topic,
     qa,
-    manageApi
+    manageApi,
+    managePrompt,
 }

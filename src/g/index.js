@@ -1,7 +1,8 @@
 // 用户
 export const user = {
     TOKEN: 'TOKEN', // 用户token
-    UID:'uid'
+    UID:'uid',
+    UName:'userName'
 }
 export const user_role = {
     root: -1,
