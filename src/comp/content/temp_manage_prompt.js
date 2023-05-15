@@ -24,11 +24,14 @@ export const ManagePrompt = (props) => {
     const state = store.useContext()
     const [showModal, setShowModal] = React.useState(false)
     const [modalInit, setModalInit] = React.useState({})
-    // let menus = {}
-    // state.setting.menu.menu.map(item => {
-    //     menus[item._id] = item
-    //     return item
-    // })
+
+    React.useEffect(() => {
+        const temp = async () => {
+            await event.manageApi.getApiList({pageIndex: 1, pageSize: 50, total: 0})
+        }
+        temp()
+    }, [])
+
     const [table, setTable] = React.useState({
         pagination: {pageIndex: 1, pageSize: 50, total: 0},
         loading: false
@@ -124,7 +127,7 @@ export const ManagePrompt = (props) => {
                                 algorithm_type:record.algorithm_type,
                                 content: record.content,
                                 position:record.position,
-                                language:record.language,
+                                language:record.language.join('\n'),
                                 creator:record.creator,
                                 creator_name:record.creator_name,
                                 label:record.label.join('\n'),
@@ -265,7 +268,26 @@ const EditPrompt = (props) => {
                             message: 'is required!',
                         }
                     ]}>
-                        <Input placeholder={'请输入模型名称'} />
+                        {/*<Input placeholder={'请输入模型名称'} />*/}
+                        <Select allowClear placeholder={'请选择模型名称'} onChange={(e)=>{
+                            state.setting.apis.apis.map((item) => {
+                                    if (item.model_name === e) {
+                                        form.setFieldsValue({ algorithm_type: item.apis });
+                                    }
+                            }
+                            )
+
+                            // this.setState({
+                            //     form.setFieldsValue({ report_type: 0 });
+                            //     form.algorithm_type = 'htttsdfjksafjlsafjlsad'
+                            // })
+                        }}>
+                            {
+                                state.setting.apis.apis.map((item) =>
+                                    <Select.Option value={item.model_name}> {item.model_name}</Select.Option>)
+                            }
+                        </Select>
+
                     </Form.Item>
                     <Form.Item label={'算法'} name={'algorithm_type'} rules={[
                         {
@@ -273,7 +295,8 @@ const EditPrompt = (props) => {
                             message: 'is required!',
                         }
                     ]}>
-                        <Input placeholder={'请输入算法'}/>
+                        <Input placeholder={'请输入算法'} disabled={true}/>
+
                     </Form.Item>
                     <Form.Item label={'Prompt内容'} name={'content'} rules={[
                         {
