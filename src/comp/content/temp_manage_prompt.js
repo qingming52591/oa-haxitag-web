@@ -36,7 +36,6 @@ export const ManagePrompt = (props) => {
     React.useEffect(() => {
         const getList = async () => {
             await event.managePrompt.getPromptList(table.pagination)
-            await event.user.getUser()
         }
         getList()
     }, [])
@@ -160,7 +159,7 @@ export const ManagePrompt = (props) => {
             </Row>
             <Table
                 columns={columns}
-                dataSource={state.setting.apis.apis}
+                dataSource={state.setting.prompt.prompt}
                 size={'small'}
                 scroll={{y: 750}}
                 bordered

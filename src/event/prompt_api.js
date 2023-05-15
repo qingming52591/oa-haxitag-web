@@ -35,7 +35,7 @@ export const getPromptList = async (pagination) => {
     let {headers, data} = http.getHttpHeardData(r,false)
     if (headers && data) {
         let items = data.data.items || []
-        store.dispatch({type: actions.setting.apis.UPDATE_APIS, UPDATE_APIS: items})
+        store.dispatch({type: actions.setting.prompt.UPDATE_PROMPT, UPDATE_APIS: items})
     }
 }
 
