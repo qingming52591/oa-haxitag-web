@@ -30,7 +30,7 @@ export const ManagePrompt = (props) => {
     //     return item
     // })
     const [table, setTable] = React.useState({
-        pagination: {pageIndex: 1, pageSize: 20, total: 0},
+        pagination: {pageIndex: 1, pageSize: 50, total: 0},
         loading: false
     })
     React.useEffect(() => {
@@ -65,7 +65,15 @@ export const ManagePrompt = (props) => {
             title: '放置位置',
             dataIndex: 'position',
             key: 'position',
-        }, {
+        },
+        {
+            title: '语言',
+            dataIndex: 'language',
+            key: 'language',
+            render: (text, record) => {
+                return text.join('、')
+            }
+        },{
             title: '标签',
             dataIndex: 'label',
             key: 'label',
@@ -222,7 +230,7 @@ const EditPrompt = (props) => {
                                 params['creator_name'] = window.sessionStorage.getItem(g.user.UName) || ''
                             }
                             Object.entries(values).map(([key,value])=>{
-                                if (key === 'label') {
+                                if (key === 'label' || key==='language') {
                                     let arr = value.split('\n')
                                     params[key] = arr
                                 } else if (value) {
@@ -295,7 +303,7 @@ const EditPrompt = (props) => {
                             message: 'is required!',
                         }
                     ]}>
-                        <Input placeholder={'请输入标准的语言格式'} />
+                        <Input.TextArea placeholder={'多个语言使用换行分割,请输入标准的语言格式'} />
                     </Form.Item>
                     <Form.Item label={'标签'} name={'label'}>
                         <Input.TextArea placeholder={'多个标签使用换行分割'} />

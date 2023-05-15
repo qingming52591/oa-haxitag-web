@@ -31,7 +31,7 @@ export const ManageApi = (props) => {
     // })
 
     const [table, setTable] = React.useState({
-        pagination: {pageIndex: 1, pageSize: 20, total: 0},
+        pagination: {pageIndex: 1, pageSize: 50, total: 0},
         loading: false
     })
 

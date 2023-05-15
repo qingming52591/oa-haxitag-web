@@ -10,7 +10,7 @@ export const createPrompt = async (formData) => {
     let r = await axios.post(`${config.API_MANAGE_HOST}/v1/api/prompt_template`, push_data, {headers: {token: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r,false)
     if (headers && data) {
-        await getPromptList()
+        await getPromptList({pageIndex: 1, pageSize: 50, total: 0})
         return true
     }
 }
@@ -22,7 +22,7 @@ export const deletePrompt = async (_ids) => {
     let r = await axios.delete(`${config.API_MANAGE_HOST}/v1/api/prompt_template`, data, {headers: {token: state.user.info.token}})
     let res = http.getHttpHeardData(r,false)
     if (res.headers && res.data) {
-        await getPromptList()
+        await getPromptList({pageIndex: 1, pageSize: 50, total: 0})
         return true
     }
 }
@@ -31,7 +31,7 @@ export const deletePrompt = async (_ids) => {
 export const getPromptList = async (pagination) => {
     const state = store.getState()
         // ?pageIndex=${pagination.pageIndex}&pageSize=${pagination.pageSize}
-    let r = await axios.get(`${config.API_MANAGE_HOST}/v1/api/prompt_template`, {headers: {"token": state.user.info.token}})
+    let r = await axios.get(`${config.API_MANAGE_HOST}/v1/api/prompt_template?pageIndex=${pagination.pageIndex}&pageSize=${pagination.pageSize}`, {headers: {"token": state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r,false)
     if (headers && data) {
         let items = data.data.items || []

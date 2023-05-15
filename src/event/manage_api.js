@@ -10,7 +10,7 @@ export const createApi = async (formData) => {
     let r = await axios.post(`${config.API_MANAGE_HOST}/v1/api/chatgpt_instances`, push_data, {headers: {token: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r,false)
     if (headers && data) {
-        await getApiList()
+        await getApiList({pageIndex: 1, pageSize: 50, total: 0})
         return true
     }
 }
@@ -22,7 +22,7 @@ export const deleteApi = async (_ids) => {
     let r = await axios.delete(`${config.API_MANAGE_HOST}/v1/api/chatgpt_instances`, data, {headers: {token: state.user.info.token}})
     let res = http.getHttpHeardData(r,false)
     if (res.headers && res.data) {
-        await getApiList()
+        await getApiList({pageIndex: 1, pageSize: 50, total: 0})
         return true
     }
 }
@@ -30,8 +30,7 @@ export const deleteApi = async (_ids) => {
 /*参数user 标识获取用户菜单*/
 export const getApiList = async (pagination) => {
     const state = store.getState()
-        // ?pageIndex=${pagination.pageIndex}&pageSize=${pagination.pageSize}
-        let r = await axios.get(`${config.API_MANAGE_HOST}/v1/api/chatgpt_instances`, {headers: {"token": state.user.info.token}})
+        let r = await axios.get(`${config.API_MANAGE_HOST}/v1/api/chatgpt_instances?pageIndex=${pagination.pageIndex}&pageSize=${pagination.pageSize}`, {headers: {"token": state.user.info.token}})
         let {headers, data} = http.getHttpHeardData(r,false)
         if (headers && data) {
             let items = data.data.items || []
