@@ -77,6 +77,9 @@ export const ManageApi = (props) => {
             title: '其它参数',
             dataIndex: 'other_keys',
             key: 'other_keys',
+            render: (text, record) => {
+                return JSON.stringify(text)
+            }
         }, {
             title: '语言',
             dataIndex: 'language',
@@ -138,7 +141,7 @@ export const ManageApi = (props) => {
                                 language:record.language.join('\n'),
                                 method:record.method,
                                 label:record.label.join('\n'),
-                                other_keys:record.other_keys,
+                                other_keys:JSON.stringify(record.other_keys),
                                 creator:record.creator,
                                 simple_prompt:record.simple_prompt,
                                 token_key:record.token_key.join('\n'),
@@ -224,6 +227,18 @@ const EditApi = (props) => {
         temp()
     }, [])
 
+    function isJSON(str) {
+        if (typeof str == 'string') {
+            try {
+                JSON.parse(str);
+                return true;
+            } catch(e) {
+                console.log(e);
+                return false;
+            }
+        }
+        console.log('It is not a string!')
+    }
     form.setFieldsValue(props.initData)
     return (
         <>
@@ -247,6 +262,12 @@ const EditApi = (props) => {
                                 if (key === 'token_key' || key === 'label' || key === 'language') {
                                     let arr = value.split('\n')
                                     params[key] = arr
+                                } else if (key === 'other_keys') {
+                                    let obj = {}
+                                    if (isJSON(value)) {
+                                        obj = JSON.parse(value)
+                                    }
+                                    params[key] = obj
                                 } else if (value) {
                                     params[key] = value
                                 }
