@@ -133,8 +133,8 @@ export const ManagePrompt = (props) => {
                                 _id: record._id,
                                 prompt_name:record.prompt_name,
                                 model_name:record.model_name,
-                                model_id:record.model_id,
-                                type:record.type,
+                                model_id:record.model_id || '',
+                                type:record.type || 1,
                                 algorithm_type:record.algorithm_type,
                                 content: record.content,
                                 position:record.position,
@@ -162,7 +162,7 @@ export const ManagePrompt = (props) => {
                             prompt_name:'',
                             model_name:'',
                             model_id:'',
-                            type:undefined,
+                            type:1,
                             algorithm_type:'',
                             content: '',
                             position:undefined,
@@ -181,7 +181,6 @@ export const ManagePrompt = (props) => {
                 bordered
                 pagination={table.pagination}
                 onChange={async (param) => {
-                    console.log(param)
                     let pagination = await event.managePrompt.getPromptList(param)
                     if (pagination) {
                         setTable({...table, ...{pagination: pagination}})
@@ -249,7 +248,7 @@ const EditPrompt = (props) => {
                                 if (key === 'label' || key==='language') {
                                     let arr = value.split('\n')
                                     params[key] = arr
-                                } else if (value) {
+                                } else if (value || value == 0) {
                                     params[key] = value
                                 }
                             })
