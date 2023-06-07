@@ -51,6 +51,15 @@ export const ManagePrompt = (props) => {
             fixed: 'left',
         },
         {
+            title: 'Prompt类型',
+            dataIndex: 'type',
+            key: 'type',
+            fixed: 'left',
+            render: (text, record) => {
+                return {0:'搜藏默认',1:'百度头条搜索',2:'搜藏搜索'}[text]
+            }
+        },
+        {
             title: '模型名称',
             dataIndex: 'model_name',
             key: 'model_name',
@@ -124,6 +133,8 @@ export const ManagePrompt = (props) => {
                                 _id: record._id,
                                 prompt_name:record.prompt_name,
                                 model_name:record.model_name,
+                                model_id:record.model_id,
+                                type:record.type,
                                 algorithm_type:record.algorithm_type,
                                 content: record.content,
                                 position:record.position,
@@ -150,6 +161,8 @@ export const ManagePrompt = (props) => {
                             _id: undefined,
                             prompt_name:'',
                             model_name:'',
+                            model_id:'',
+                            type:undefined,
                             algorithm_type:'',
                             content: '',
                             position:undefined,
@@ -231,6 +244,7 @@ const EditPrompt = (props) => {
                             if (window.sessionStorage.getItem(g.user.UName)) {
                                 params['creator_name'] = window.sessionStorage.getItem(g.user.UName) || ''
                             }
+
                             Object.entries(values).map(([key,value])=>{
                                 if (key === 'label' || key==='language') {
                                     let arr = value.split('\n')
@@ -262,6 +276,22 @@ const EditPrompt = (props) => {
                     ]}>
                         <Input placeholder={'请输入Prompt名称'} />
                     </Form.Item>
+                    <Form.Item label={'prompt类型'} name={'type'} rules={[
+                        {
+                            required: true,
+                            message: 'is required!',
+                        }
+                    ]}>
+                        <Select allowClear placeholder={'请选择prompt类型'}>
+                            {
+                                [{value:0,lable:'搜藏默认'},{value:1,lable:'百度头条搜索'},{value:2,lable:'搜藏搜索'}].map((item) =>
+                                    <Select.Option value={item.value}> {item.lable}</Select.Option>)
+                            }
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label={'模型id'} name={'model_id'} hidden={true}>
+                        <Input/>
+                    </Form.Item>
                     <Form.Item label={'模型名称'} name={'model_name'} rules={[
                         {
                             required: true,
@@ -273,6 +303,7 @@ const EditPrompt = (props) => {
                             state.setting.apis.apis.map((item) => {
                                     if (item.model_name === e) {
                                         form.setFieldsValue({ algorithm_type: item.apis });
+                                        form.setFieldsValue({ model_id: item._id });
                                     }
                             }
                             )
@@ -287,7 +318,6 @@ const EditPrompt = (props) => {
                                     <Select.Option value={item.model_name}> {item.model_name}</Select.Option>)
                             }
                         </Select>
-
                     </Form.Item>
                     <Form.Item label={'算法'} name={'algorithm_type'} rules={[
                         {
