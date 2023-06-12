@@ -56,7 +56,7 @@ export const ManagePrompt = (props) => {
             key: 'type',
             fixed: 'left',
             render: (text, record) => {
-                return {0:'搜藏默认',1:'百度头条搜索',2:'搜藏搜索'}[text]
+                return {0:'不需补全',1:'百度搜索补全',2:'搜藏搜索补全',3:'直接补全'}[text]
             }
         },
         {
