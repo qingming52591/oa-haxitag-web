@@ -283,7 +283,7 @@ const EditPrompt = (props) => {
                     ]}>
                         <Select allowClear placeholder={'请选择prompt类型'}>
                             {
-                                [{value:0,lable:'搜藏默认'},{value:1,lable:'百度头条搜索'},{value:2,lable:'搜藏搜索'}].map((item) =>
+                                [{value:0,lable:'搜藏默认'},{value:1,lable:'百度头条搜索'},{value:2,lable:'搜藏搜索'},{value:3,lable:'实体词抽取'}].map((item) =>
                                     <Select.Option value={item.value}> {item.lable}</Select.Option>)
                             }
                         </Select>
