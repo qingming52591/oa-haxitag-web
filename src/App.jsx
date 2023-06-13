@@ -8,7 +8,6 @@ import config from "./conf";
 
 const App = (props) => {
     const state = store.useContext();
-
     React.useEffect(() => {
         document.title = config.TITLE
         const onLogin = async () => {
