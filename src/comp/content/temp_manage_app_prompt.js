@@ -19,8 +19,9 @@ import {
     Popconfirm
 } from "antd";
 import * as util from '../../util'
+import {getAppList} from "../../event/manage_app";
 
-export const ManageApi = (props) => {
+export const ManageAppPrompt = (props) => {
     const state = store.useContext()
     const [showModal, setShowModal] = React.useState(false)
     const [modalInit, setModalInit] = React.useState({})
@@ -37,64 +38,29 @@ export const ManageApi = (props) => {
 
     React.useEffect(() => {
         const getList = async () => {
-            await event.manageApi.getApiList(table.pagination)
+            let pagination = await event.manageApp.getAppPrompts(table.pagination)
+            if (pagination) {
+                setTable({...table, ...{pagination: pagination}})
+            }
+
             await event.user.getUser()
+            await event.manageApp.getAppList({pageIndex: 1, pageSize: 500})
+            await event.managePrompt.getPromptList({pageIndex: 1, pageSize: 500})
         }
         getList()
     }, [])
 
     const columns = [
         {
-            title: '名称',
-            dataIndex: 'model_name',
-            key: 'model_name',
+            title: 'App名称',
+            dataIndex: 'app_name',
+            key: 'app_name',
             fixed: 'left',
             // ...util.getColSearchLocal('名称', 'name')
         },{
-            title: 'API',
-            dataIndex: 'apis',
-            key: 'apis',
-        }, {
-            title: '方法',
-            dataIndex: 'method',
-            key: 'method',
-        }, {
-            title: '类型',
-            dataIndex: 'type',
-            key: 'type',
-            // render: (text, record) => {
-            //     state.setting.apis.types.map
-            //     return g.menu_desc[record.type]
-            // }
-        },{
-            title: 'tokenKey',
-            dataIndex: 'token_key',
-            key: 'token_key',
-            render: (text, record) => {
-                return record.token_key.join(',')
-            }
-        },{
-            title: '其它参数',
-            dataIndex: 'other_keys',
-            key: 'other_keys',
-            render: (text, record) => {
-                return JSON.stringify(text)
-            }
-        }, {
-            title: '语言',
-            dataIndex: 'language',
-            key: 'language',
-            render: (text, record) => {
-                return text.join('、')
-            }
-        },
-         {
-            title: '标签',
-            dataIndex: 'label',
-            key: 'label',
-             render: (text, record) => {
-                 return record.label.join(',')
-             }
+            title: 'Prompt名称',
+            dataIndex: 'prompt_name',
+            key: 'prompt_name',
         },
         {
             title: '创建者',
@@ -128,25 +94,19 @@ export const ManageApi = (props) => {
                                     onCancel={(e) => e.stopPropagation()}
                                     onConfirm={async (e) => {
                                         e.stopPropagation()
-                                        await event.manageApi.deleteApi([record._id])
+                                        await event.manageApp.deleteAppPrompts([record._id])
                                     }}>
                             <Button danger onClick={(e) => e.stopPropagation()}>删除</Button>
                         </Popconfirm>
                         <Button style={{marginLeft: 10}}  onClick={async () => {
+                            setShowModal(true)
                             setModalInit({
                                 _id: record._id,
-                                model_name:record.model_name,
-                                apis:record.apis,
-                                type: record.type,
-                                language:record.language.join('\n'),
-                                method:record.method,
-                                label:record.label.join('\n'),
-                                other_keys:JSON.stringify(record.other_keys),
-                                creator:record.creator,
-                                simple_prompt:record.simple_prompt,
-                                token_key:record.token_key.join('\n'),
+                                app_id:record.app_id,
+                                prompt_id:record.prompt_id,
+                                prompt_name:record.prompt_name,
+                                type:record.type,
                             })
-                            setShowModal(true)
                         }}>编辑</Button>
                     </>)
                 }
@@ -158,34 +118,28 @@ export const ManageApi = (props) => {
         <>
             <Row justify="end">
                 <Col span={2}>
-                    <EditApi show={showModal} setShow={setShowModal} initData={modalInit} setInitData={setModalInit}/>
+                    <EditAppPrompt show={showModal} setShow={setShowModal} initData={modalInit} setInitData={setModalInit}/>
                     <Button type={'primary'} onClick={async () => {
+                        setShowModal(true)
                         setModalInit({
                             _id: undefined,
-                            model_name:'',
-                            apis:'',
-                            type: undefined,
-                            language:'',
-                            method:undefined,
-                            label:'',
-                            other_keys:'',
-                            creator:'',
-                            simple_prompt:'',
-                            token_key:''
+                            app_id:'',
+                            prompt_id:'',
+                            prompt_name:'',
+                            type:undefined
                         })
-                        setShowModal(true)
-                    }}>创建API</Button>
+                    }}>关联</Button>
                 </Col>
             </Row>
             <Table
                 columns={columns}
-                dataSource={state.setting.apis.apis}
+                dataSource={state.setting.prompt.app_prompt}
+                size={'small'}
                 scroll={{y: 750}}
                 bordered
                 pagination={table.pagination}
                 onChange={async (param) => {
-                    console.log(param)
-                    let pagination = await event.manageApi.getApiList(param)
+                    let pagination = await event.manageApp.getAppPrompts(param)
                     if (pagination) {
                         setTable({...table, ...{pagination: pagination}})
                     }
@@ -217,12 +171,12 @@ export const ManageApi = (props) => {
     )
 }
 
-const EditApi = (props) => {
+const EditAppPrompt = (props) => {
     const state = store.useContext()
     const [form] = Form.useForm()
     React.useEffect(() => {
         const temp = async () => {
-            await event.manageApi.getTypeList()
+            await event.manageApp.getTypeList()
         }
         temp()
     }, [])
@@ -240,14 +194,15 @@ const EditApi = (props) => {
         console.log('It is not a string!')
     }
     React.useEffect(()=>{
-        if (props.show) {
+        if (props.show)
+        {
             form.setFieldsValue(props.initData)
         }
     },[props.show])
     return (
         <>
             <Modal
-                title={'API管理'}
+                title={'APP管理'}
                 visible={props.show}
                 okText={'保存'} cancelText={'取消'}
                 onCancel={(e) => {
@@ -261,25 +216,10 @@ const EditApi = (props) => {
                             if (window.sessionStorage.getItem(g.user.UID)) {
                                 params['creator'] = window.sessionStorage.getItem(g.user.UID) || ''
                             }
-
                             Object.entries(values).map(([key,value])=>{
-                                if (key === 'token_key' || key === 'label' || key === 'language') {
-                                    let arr = value.split('\n')
-                                    params[key] = arr
-                                } else if (key === 'other_keys') {
-                                    let obj = {}
-                                    if (isJSON(value)) {
-                                        obj = JSON.parse(value)
-                                    }
-                                    params[key] = obj
-                                } else if (value) {
-                                    params[key] = value
-                                }
+                                params[key] = value
                             })
-                            if (!await event.manageApi.createApi(params)) {
-                                message.error('保存失败')
-                                return
-                            } else {
+                            if (await event.manageApp.createAppPrompts(params)) {
                                 message.success('保存成功')
                                 props.setShow(false)
                                 form.resetFields()
@@ -287,79 +227,61 @@ const EditApi = (props) => {
                         })
                 }}
             >
-                <Form form={form}>
+                <Form form={form} key={'app_prompt'} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
                     <Form.Item key={'_id'} label={'_id'} name={'_id'} hidden={true}>
                         <Input/>
                     </Form.Item>
-                    <Form.Item label={'名称'} name={'model_name'} rules={[
+                    <Form.Item key={'app_id'} label={'关联App'} name={'app_id'} rules={[
                         {
                             required: true,
                             message: 'is required!',
                         }
                     ]}>
-                        <Input placeholder={'请输入API名称'} />
-                    </Form.Item>
-                    <Form.Item key={'apis'} label={'API'} name={'apis'} rules={[
-                        {
-                            required: true,
-                            message: 'is required!',
-                        }
-                    ]}>
-                        <Input placeholder={'请输入API地址'}/>
-                    </Form.Item>
-                    <Form.Item key={'method'} label={'方法'} name={'method'} rules={[
-                        {
-                            required: true,
-                            message: 'is required!',
-                        }
-                    ]}>
-                        <Select allowClear placeholder={'请选择方法'}>
+                        <Select allowClear placeholder={'请选择App'}>
                             {
-                                ['post','get','put'].map((item) =>
-                                    <Select.Option key={item} value={item}> {item}</Select.Option>)
+                                state.setting.prompt.app.map((item) =>
+                                    <Select.Option key={item._id} value={item._id}> {item.name}</Select.Option>)
                             }
                         </Select>
                     </Form.Item>
 
-                    <Form.Item key={'token_key'} label={'tokenKey'} name={'token_key'} rules={[
+                    <Form.Item key={'prompt_id'} label={'Prompt'} name={'prompt_id'} rules={[
                         {
                             required: true,
                             message: 'is required!',
                         }
                     ]}>
-                        <Input.TextArea placeholder={'多个key使用换行分割'} />
-                    </Form.Item>
-
-
-                    <Form.Item key={'type'} label={'类型'} name={'type'} rules={[
-                        {
-                            required: true,
-                            message: 'is required!',
-                        }
-                    ]}>
-                        <Select allowClear placeholder={'请选择类型'}>
+                        <Select allowClear placeholder={'请选择Prompt'} onChange={(e)=>{
+                            state.setting.prompt.prompt.map((item) => {
+                                    if (item._id === e) {
+                                        form.setFieldsValue({ prompt_name: item.prompt_name });
+                                    }
+                                }
+                            )
+                        }}>
                             {
-                                state.setting.apis.types.map((item) =>
-                                    <Select.Option key={item.en} value={item.en}> {item.zh}</Select.Option>)
+                                state.setting.prompt.prompt.map((item) =>
+                                    <Select.Option key={item._id} value={item._id}> {item.prompt_name}</Select.Option>)
                             }
                         </Select>
                     </Form.Item>
 
-                    <Form.Item key={'label'} label={'标签'} name={'label'}>
-                        <Input.TextArea placeholder={'多个标签使用换行分割'} />
+                    <Form.Item label={'prompt_name'} name={'prompt_name'} hidden={true}>
+                        <Input/>
                     </Form.Item>
 
-                    <Form.Item key={'language'} label={'语言'} name={'language'} rules={[
+                    <Form.Item key={'type'} label={'补全方式'} name={'type'} rules={[
                         {
                             required: true,
                             message: 'is required!',
                         }
                     ]}>
-                        <Input.TextArea placeholder={'多个语言使用换行分割,请输入标准的语言格式'} />
-                    </Form.Item>
-
-                    <Form.Item key={'other_keys'} label={'其他参数'} name={'other_keys'}>
-                        <Input.TextArea placeholder={'JSON字符串对象'} />
+                        <Select allowClear placeholder={'请选择补全方式'}>
+                            {
+                                [{value:0,lable:'不需补全'},{value:1,lable:'百度搜索补全'},{value:2,lable:'搜藏搜索补全'},{value:3,lable:'直接补全'},{value:4,lable:'谷歌补全'}].map((item) =>
+                                    <Select.Option key={item.value} value={item.value}> {item.lable}</Select.Option>)
+                            }
+                        </Select>
                     </Form.Item>
                 </Form>
             </Modal>

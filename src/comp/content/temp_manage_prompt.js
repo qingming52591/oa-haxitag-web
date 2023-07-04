@@ -186,6 +186,7 @@ export const ManagePrompt = (props) => {
                         setTable({...table, ...{pagination: pagination}})
                     }
                 }}
+                rowKey={"_id"}
                 size={'small'}
                 onRow={(record) => {
                     return {
@@ -221,8 +222,11 @@ const EditPrompt = (props) => {
         }
         temp()
     }, [])
-
-    form.setFieldsValue(props.initData)
+    React.useEffect(()=>{
+        if (props.show) {
+            form.setFieldsValue(props.initData)
+        }
+    },[props.show])
     return (
         <>
             <Modal
@@ -284,7 +288,7 @@ const EditPrompt = (props) => {
                         <Select allowClear placeholder={'请选择prompt类型'}>
                             {
                                 [{value:0,lable:'不需补全'},{value:1,lable:'百度搜索补全'},{value:2,lable:'搜藏搜索补全'},{value:3,lable:'直接补全'}].map((item) =>
-                                    <Select.Option value={item.value}> {item.lable}</Select.Option>)
+                                    <Select.Option key={item.value} value={item.value}> {item.lable}</Select.Option>)
                             }
                         </Select>
                     </Form.Item>
@@ -304,17 +308,12 @@ const EditPrompt = (props) => {
                                         form.setFieldsValue({ algorithm_type: item.apis });
                                         form.setFieldsValue({ model_id: item._id });
                                     }
-                            }
+                                }
                             )
-
-                            // this.setState({
-                            //     form.setFieldsValue({ report_type: 0 });
-                            //     form.algorithm_type = 'htttsdfjksafjlsafjlsad'
-                            // })
                         }}>
                             {
                                 state.setting.apis.apis.map((item) =>
-                                    <Select.Option value={item.model_name}> {item.model_name}</Select.Option>)
+                                    <Select.Option key={item.model_name} value={item.model_name}> {item.model_name}</Select.Option>)
                             }
                         </Select>
                     </Form.Item>
@@ -344,7 +343,7 @@ const EditPrompt = (props) => {
                         <Select allowClear placeholder={'请选择放置位置'}>
                             {
                                 ['前面','后面','中间'].map((item) =>
-                                    <Select.Option value={item}> {item}</Select.Option>)
+                                    <Select.Option key={item} value={item}> {item}</Select.Option>)
                             }
                         </Select>
                     </Form.Item>

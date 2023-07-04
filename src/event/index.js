@@ -11,7 +11,7 @@ import * as topic from './topic'
 import * as qa from './qa'
 import * as manageApi from  './manage_api'
 import * as managePrompt from './prompt_api'
-
+import * as manageApp from  './manage_app'
 export {
     home,
     user,
@@ -26,4 +26,5 @@ export {
     qa,
     manageApi,
     managePrompt,
+    manageApp,
 }
