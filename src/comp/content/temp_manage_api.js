@@ -67,11 +67,19 @@ export const ManageApi = (props) => {
             //     return g.menu_desc[record.type]
             // }
         },{
+            // auth_info
             title: 'tokenKey',
             dataIndex: 'token_key',
             key: 'token_key',
             render: (text, record) => {
                 return record.token_key.join(',')
+            }
+        },{
+            title: 'auth_info',
+            dataIndex: 'auth_info',
+            key: 'auth_info',
+            render: (text, record) => {
+                return JSON.stringify(text)
             }
         },{
             title: '其它参数',
@@ -145,6 +153,9 @@ export const ManageApi = (props) => {
                                 creator:record.creator,
                                 simple_prompt:record.simple_prompt,
                                 token_key:record.token_key.join('\n'),
+                                auth_mode:record.auth_info && record.auth_info.auth_mode,
+                                auth_policy:record.auth_info && record.auth_info.auth_policy,
+                                keys_info:record.auth_info && JSON.stringify(record.auth_info.keys_info),
                             })
                             setShowModal(true)
                         }}>编辑</Button>
@@ -262,8 +273,19 @@ const EditApi = (props) => {
                                 params['creator'] = window.sessionStorage.getItem(g.user.UID) || ''
                             }
 
+                            let auth_info = {}
                             Object.entries(values).map(([key,value])=>{
-                                if (key === 'token_key' || key === 'label' || key === 'language') {
+                                if (key ==='auth_mode' || key ==='auth_policy') {
+                                    auth_info[key] = value
+                                    params['auth_info'] = auth_info
+                                }  else if (key === 'keys_info') {
+                                    let obj = {}
+                                    if (isJSON(value)) {
+                                        obj = JSON.parse(value)
+                                    }
+                                    auth_info[key] = obj
+                                    params['auth_info'] = auth_info
+                                } else if (key === 'token_key' || key === 'label' || key === 'language') {
                                     let arr = value.split('\n')
                                     params[key] = arr
                                 } else if (key === 'other_keys') {
@@ -358,8 +380,39 @@ const EditApi = (props) => {
                         <Input.TextArea placeholder={'多个语言使用换行分割,请输入标准的语言格式'} />
                     </Form.Item>
 
+                    <Form.Item key={'auth_mode'} label={'认证方式'} name={'auth_mode'} rules={[
+                        {
+                            required: true,
+                            message: 'is required!',
+                        }
+                    ]}>
+                        <Select allowClear placeholder={'请选择认证方式'}>
+                            {
+                                [{value:0,name:'无'},{value:1,name:'Token认证'},{value:2,name:'AK/SK认证'}].map((item) =>
+                                    <Select.Option key={item.value} value={item.value}> {item.name}</Select.Option>)
+                            }
+                        </Select>
+                    </Form.Item>
+                    <Form.Item key={'auth_policy'} label={'认证策略'} name={'auth_policy'} rules={[
+                        {
+                            required: false,
+                            message: 'is required!',
+                        }
+                    ]}>
+                        <Select allowClear placeholder={'请选择认证策略'}>
+                            {
+                                [ {value:1,name:'百度文心'}].map((item) =>
+                                    <Select.Option key={item.value} value={item.value}> {item.name}</Select.Option>)
+                            }
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item key={'keys_info'} label={'参数'} name={'keys_info'}>
+                        <Input.TextArea placeholder={'JSON对象'} />
+                    </Form.Item>
+
                     <Form.Item key={'other_keys'} label={'其他参数'} name={'other_keys'}>
-                        <Input.TextArea placeholder={'JSON字符串对象'} />
+                        <Input.TextArea placeholder={'JSON对象'} />
                     </Form.Item>
                 </Form>
             </Modal>
