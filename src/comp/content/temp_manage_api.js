@@ -66,15 +66,17 @@ export const ManageApi = (props) => {
             //     state.setting.apis.types.map
             //     return g.menu_desc[record.type]
             // }
-        },{
-            // auth_info
-            title: 'tokenKey',
-            dataIndex: 'token_key',
-            key: 'token_key',
-            render: (text, record) => {
-                return record.token_key.join(',')
-            }
-        },{
+        },
+        // {
+        //     // auth_info
+        //     title: 'tokenKey',
+        //     dataIndex: 'token_key',
+        //     key: 'token_key',
+        //     render: (text, record) => {
+        //         return record.token_key.join(',')
+        //     }
+        // },
+        {
             title: 'auth_info',
             dataIndex: 'auth_info',
             key: 'auth_info',
@@ -152,7 +154,7 @@ export const ManageApi = (props) => {
                                 other_keys:JSON.stringify(record.other_keys),
                                 creator:record.creator,
                                 simple_prompt:record.simple_prompt,
-                                token_key:record.token_key.join('\n'),
+                                // token_key:record.token_key.join('\n'),
                                 auth_mode:record.auth_info && record.auth_info.auth_mode,
                                 auth_policy:record.auth_info && record.auth_info.auth_policy,
                                 keys_info:record.auth_info && JSON.stringify(record.auth_info.keys_info),
@@ -343,14 +345,14 @@ const EditApi = (props) => {
                         </Select>
                     </Form.Item>
 
-                    <Form.Item key={'token_key'} label={'tokenKey'} name={'token_key'} rules={[
-                        {
-                            required: true,
-                            message: 'is required!',
-                        }
-                    ]}>
-                        <Input.TextArea placeholder={'多个key使用换行分割'} />
-                    </Form.Item>
+                    {/*<Form.Item key={'token_key'} label={'tokenKey'} name={'token_key'} rules={[*/}
+                    {/*    {*/}
+                    {/*        required: true,*/}
+                    {/*        message: 'is required!',*/}
+                    {/*    }*/}
+                    {/*]}>*/}
+                    {/*    <Input.TextArea placeholder={'多个key使用换行分割'} />*/}
+                    {/*</Form.Item>*/}
 
 
                     <Form.Item key={'type'} label={'类型'} name={'type'} rules={[
