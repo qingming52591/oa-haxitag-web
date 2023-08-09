@@ -82,7 +82,7 @@ export const ManageApi = (props) => {
                 return JSON.stringify(text)
             }
         },{
-            title: '其它参数',
+            title: 'other_keys',
             dataIndex: 'other_keys',
             key: 'other_keys',
             render: (text, record) => {
