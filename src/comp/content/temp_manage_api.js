@@ -19,11 +19,15 @@ import {
     Popconfirm
 } from "antd";
 import * as util from '../../util'
+import {testChat} from "../../event/manage_api";
 
 export const ManageApi = (props) => {
     const state = store.useContext()
     const [showModal, setShowModal] = React.useState(false)
     const [modalInit, setModalInit] = React.useState({})
+
+    const [showModalTest, setShowModalTest] = React.useState(false)
+    const [modalInitTest, setModalInitTest] = React.useState({})
     // let menus = {}
     // state.setting.menu.menu.map(item => {
     //     menus[item._id] = item
@@ -127,7 +131,7 @@ export const ManageApi = (props) => {
         {
             title: '操作',
             key: 'action',
-            width:200,
+            width:100,
             render: (text, record) => {
                 if (record.state === g.menu_state.fixed) {
                     return <Button danger disabled>删除</Button>
@@ -142,7 +146,7 @@ export const ManageApi = (props) => {
                                     }}>
                             <Button danger onClick={(e) => e.stopPropagation()}>删除</Button>
                         </Popconfirm>
-                        <Button style={{marginLeft: 10}}  onClick={async () => {
+                        <Button style={{marginTop: 10}}  onClick={async () => {
                             setModalInit({
                                 _id: record._id,
                                 model_name:record.model_name,
@@ -161,6 +165,12 @@ export const ManageApi = (props) => {
                             })
                             setShowModal(true)
                         }}>编辑</Button>
+                        <Button style={{marginTop: 10}}  onClick={async () => {
+                            setModalInitTest({
+                                _id: record._id,
+                            })
+                            setShowModalTest(true)
+                        }}>测试</Button>
                     </>)
                 }
 
@@ -172,6 +182,8 @@ export const ManageApi = (props) => {
             <Row justify="end">
                 <Col span={2}>
                     <EditApi show={showModal} setShow={setShowModal} initData={modalInit} setInitData={setModalInit}/>
+                    <TestApi show={showModalTest} setShow={setShowModalTest} initData={modalInitTest} setInitData={setModalInitTest}/>
+
                     <Button type={'primary'} onClick={async () => {
                         setModalInit({
                             _id: undefined,
@@ -415,6 +427,85 @@ const EditApi = (props) => {
 
                     <Form.Item key={'other_keys'} label={'其他参数'} name={'other_keys'}>
                         <Input.TextArea placeholder={'JSON对象'} />
+                    </Form.Item>
+                </Form>
+            </Modal>
+        </>
+    )
+}
+const TestApi = (props) => {
+    const state = store.useContext()
+    const [form] = Form.useForm()
+    React.useEffect(() => {
+        const temp = async () => {
+            await event.manageApi.getTypeList()
+        }
+        temp()
+    }, [])
+
+    function isJSON(str) {
+        if (typeof str == 'string') {
+            try {
+                JSON.parse(str);
+                return true;
+            } catch(e) {
+                console.log(e);
+                return false;
+            }
+        }
+        console.log('It is not a string!')
+    }
+    React.useEffect(()=>{
+        if (props.show) {
+            form.setFieldsValue(props.initData)
+        }
+    },[props.show])
+    return (
+        <>
+            <Modal
+                title={'接口测试'}
+                visible={props.show}
+                okText={'关闭'} cancelText={'取消'}
+                onCancel={(e) => {
+                    props.setShow(false)
+                    form.resetFields()
+                }}
+                onOk={() => {
+                    props.setShow(false)
+                    form.resetFields()
+                }}
+            >
+                <Form form={form}>
+                    <Form.Item key={'_id'} label={'_id'} name={'_id'} hidden={true}>
+                        <Input/>
+                    </Form.Item>
+                    <Form.Item key={'parmas'} label={'参数'} name={'parmas'}>
+                        <Input.TextArea placeholder={'JSON对象'} />
+                    </Form.Item>
+                    <Form.Item style={{textAlign: 'right'}} >
+                        <Button type={'primary'} onClick={async () => {
+                            form.validateFields().then(async (values) => {
+                                    let params = {}
+                                    Object.entries(values).map(([key,value])=>{
+                                     if (key === 'parmas') {
+                                            let obj = {}
+                                            if (isJSON(value)) {
+                                                obj = JSON.parse(value)
+                                                Object.entries(obj).map(([key1,value1])=>{
+                                                    params[key1] = value1
+                                                })
+                                            }
+                                        } else if (value) {
+                                            params[key] = value
+                                        }
+                                    })
+                                    let res = await event.manageApi.testChat(params)
+                                    form.setFieldsValue({ res: JSON.stringify(res) });
+                                })
+                        }}>发送</Button>
+                    </Form.Item>
+                    <Form.Item key={'res'} label={'结果'} name={'res'}>
+                        <Input.TextArea disabled placeholder={'结果'} />
                     </Form.Item>
                 </Form>
             </Modal>

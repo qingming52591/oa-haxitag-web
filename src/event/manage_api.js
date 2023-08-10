@@ -49,3 +49,14 @@ export const getTypeList = async () => {
     }
 }
 
+// 测试
+export const testChat = async (formData) => {
+    const state = store.getState()
+    let push_data = {...formData}
+    let r = await axios.post(`${config.API_MANAGE_HOST}/v1/api/chatgpt_instances/chat`, push_data,{headers: {"token": state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r,false)
+    console.log('data---',data)
+    return data
+}
+
+
