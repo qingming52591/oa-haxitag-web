@@ -56,7 +56,7 @@ export const ManagePrompt = (props) => {
             key: 'type',
             fixed: 'left',
             render: (text, record) => {
-                return {0:'不需补全',1:'百度搜索补全',2:'搜藏搜索补全',3:'直接补全'}[text]
+                return {0:'不需补全',1:'百度搜索补全',2:'搜藏搜索补全',3:'直接补全',4:'谷歌搜索补全'}[text]
             }
         },
         {
@@ -287,7 +287,7 @@ const EditPrompt = (props) => {
                     ]}>
                         <Select allowClear placeholder={'请选择prompt类型'}>
                             {
-                                [{value:0,lable:'不需补全'},{value:1,lable:'百度搜索补全'},{value:2,lable:'搜藏搜索补全'},{value:3,lable:'直接补全'}].map((item) =>
+                                [{value:0,lable:'不需补全'},{value:1,lable:'百度搜索补全'},{value:2,lable:'搜藏搜索补全'},{value:3,lable:'直接补全'},{value:4,lable:'谷歌搜索补全'}].map((item) =>
                                     <Select.Option key={item.value} value={item.value}> {item.lable}</Select.Option>)
                             }
                         </Select>
