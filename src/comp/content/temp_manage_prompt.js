@@ -347,6 +347,19 @@ const EditPrompt = (props) => {
                             }
                         </Select>
                     </Form.Item>
+                    <Form.Item label={'System'} name={'system'} rules={[
+                        {
+                            required: false,
+                            message: 'is required!',
+                        }
+                    ]}>
+                        <Select allowClear placeholder={'请选择'}>
+                            {
+                                ['KYT'].map((item) =>
+                                    <Select.Option key={item} value={item}> {item}</Select.Option>)
+                            }
+                        </Select>
+                    </Form.Item>
                     <Form.Item label={'语言'} name={'language'} rules={[
                         {
                             required: true,
