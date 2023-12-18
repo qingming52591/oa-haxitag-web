@@ -142,6 +142,7 @@ export const ManagePrompt = (props) => {
                                 creator:record.creator,
                                 creator_name:record.creator_name,
                                 label:record.label.join('\n'),
+                                system:record.system,
                             })
                             setShowModal(true)
                         }}>编辑</Button>
@@ -168,6 +169,7 @@ export const ManagePrompt = (props) => {
                             position:undefined,
                             language:'',
                             label:'',
+                            system:''
                         })
                         setShowModal(true)
                     }}>创建Prompt</Button>
