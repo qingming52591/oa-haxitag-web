@@ -7,7 +7,7 @@ const config = {
     API_MANAGE_HOST: API_MANAGE_HOST,
     API_OA_BASE: `${API_OA_HOST}/${API_OA_PREFIX}`,
     VIDEO_BASE: 'https://op.dekolla.xyz/api',
-    TITLE: 'Pyth.world oa',
+    TITLE: 'HaxiTAG.world oa',
     DEBUG: false
 }
 export default config

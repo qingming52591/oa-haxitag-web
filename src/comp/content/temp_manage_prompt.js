@@ -28,6 +28,7 @@ export const ManagePrompt = (props) => {
     React.useEffect(() => {
         const temp = async () => {
             await event.manageApi.getApiList({pageIndex: 1, pageSize: 50, total: 0})
+            await event.manageApi.getSystemList()
         }
         temp()
     }, [])
@@ -357,7 +358,7 @@ const EditPrompt = (props) => {
                     ]}>
                         <Select allowClear placeholder={'请选择'}>
                             {
-                                ['KYT','HaxiTAG','百科'].map((item) =>
+                                state.setting.apis.system.map((item) =>
                                     <Select.Option key={item} value={item}> {item}</Select.Option>)
                             }
                         </Select>

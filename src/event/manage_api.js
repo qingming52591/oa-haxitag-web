@@ -60,3 +60,14 @@ export const testChat = async (formData) => {
 }
 
 
+
+/*获取system list*/
+export const getSystemList = async (pagination) => {
+    const state = store.getState()
+    let r = await axios.get('http://43.154.145.166:8050/prompt_user_sys', {headers: {"token": state.user.info.token}})
+    let {headers, data} = http.getHttpHeardData(r,false)
+    if (headers && data) {
+        let items = data.data || []
+        store.dispatch({type: actions.setting.apis.UPDATE_SYSTEM, UPDATE_SYSTEM: items})
+    }
+}

@@ -4,12 +4,14 @@ import produce from "immer";
 export const state = {
     apis: [],
     types: [],
+    system:[]
 }
 
 // action
 export const action = {
     UPDATE_APIS: 'UPDATE_APIS',
-    UPDATE_TYPES: 'UPDATE_TYPES'
+    UPDATE_TYPES: 'UPDATE_TYPES',
+    UPDATE_SYSTEM: 'UPDATE_SYSTEM',
 }
 
 // reduce
@@ -26,6 +28,12 @@ export const reducer = (state, nowAction) => {
                 draft.types = nowAction.UPDATE_TYPES
             })
             return typeState
+
+        case action.UPDATE_SYSTEM:
+            let systemState = produce(state, (draft) => {
+                draft.system = nowAction.UPDATE_SYSTEM
+            })
+            return systemState
 
         default:
             return state
