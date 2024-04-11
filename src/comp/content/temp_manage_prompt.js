@@ -358,7 +358,8 @@ const EditPrompt = (props) => {
                     ]}>
                         <Select allowClear placeholder={'请选择'}>
                             {
-                                state.setting.apis.system.map((item) =>
+                                // state.setting.apis.system.
+                                ["KYT", "HaxiTAG", "百科", "WIKI"].map((item) =>
                                     <Select.Option key={item} value={item}> {item}</Select.Option>)
                             }
                         </Select>
