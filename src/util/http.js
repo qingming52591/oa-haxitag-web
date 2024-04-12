@@ -8,7 +8,7 @@ export const getHttpHeardData = (resp, update_token = true) => {
     let result = {headers: null, data: null}
     if (resp.status === 200) {
         util.log(resp)
-        if (resp.data.code === g.code.success || resp.data.error_code === g.code.success || resp.config.url === "http://43.154.145.166:8050/prompt_user_sys") {
+        if (resp.data.code === g.code.success || resp.data.error_code === g.code.success || resp.config.url === 'https://bubbie.dekolla.xyz/prompt_user_sys') {
             if (update_token) {
                 store.dispatch({type: actions.user.info.UPDATE_TOKEN, token: resp.headers.token})
             }
