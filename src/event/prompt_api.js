@@ -31,11 +31,12 @@ export const deletePrompt = async (_ids) => {
 export const getPromptList = async (pagination) => {
     const state = store.getState()
         // ?pageIndex=${pagination.pageIndex}&pageSize=${pagination.pageSize}
-    let r = await axios.get(`${config.API_MANAGE_HOST}/v1/api/prompt_template?pageIndex=${pagination.pageIndex}&pageSize=${pagination.pageSize}`, {headers: {"token": state.user.info.token}})
+    let r = await axios.get(`${config.API_MANAGE_HOST}/v1/api/prompt_template?pageIndex=${pagination.current || pagination.pageIndex}&pageSize=${pagination.pageSize}`, {headers: {"token": state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r,false)
     if (headers && data) {
         let items = data.data.items || []
         store.dispatch({type: actions.setting.prompt.UPDATE_PROMPT, UPDATE_APIS: items})
+        return {pageIndex: data.data.pageIndex, pageSize: data.data.pageSize, total: data.data.total}
     }
 }
 

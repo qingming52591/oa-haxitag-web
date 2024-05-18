@@ -27,7 +27,7 @@ export const ManagePrompt = (props) => {
 
     React.useEffect(() => {
         const temp = async () => {
-            await event.manageApi.getApiList({pageIndex: 1, pageSize: 50, total: 0})
+            await event.manageApi.getApiList({pageIndex: 1, pageSize: 50, total: 50})
             await event.manageApi.getSystemList()
         }
         temp()
@@ -39,7 +39,10 @@ export const ManagePrompt = (props) => {
     })
     React.useEffect(() => {
         const getList = async () => {
-            await event.managePrompt.getPromptList(table.pagination)
+            let pagination = await event.managePrompt.getPromptList(table.pagination)
+            if (pagination) {
+                setTable({...table, ...{pagination: pagination}})
+            }
         }
         getList()
     }, [])
@@ -184,6 +187,7 @@ export const ManagePrompt = (props) => {
                 bordered
                 pagination={table.pagination}
                 onChange={async (param) => {
+                    debugger
                     let pagination = await event.managePrompt.getPromptList(param)
                     if (pagination) {
                         setTable({...table, ...{pagination: pagination}})
