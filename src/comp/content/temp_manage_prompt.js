@@ -34,7 +34,7 @@ export const ManagePrompt = (props) => {
     }, [])
 
     const [table, setTable] = React.useState({
-        pagination: {pageIndex: 1, pageSize: 50, total: 0},
+        pagination: {current:1,pageIndex: 1, pageSize: 50, total: 0},
         loading: false
     })
     React.useEffect(() => {
@@ -128,7 +128,7 @@ export const ManagePrompt = (props) => {
                                     onCancel={(e) => e.stopPropagation()}
                                     onConfirm={async (e) => {
                                         e.stopPropagation()
-                                        await event.managePrompt.deletePrompt([record._id])
+                                        await event.managePrompt.deletePrompt([record._id],table.pagination)
                                     }}>
                             <Button danger onClick={(e) => e.stopPropagation()}>删除</Button>
                         </Popconfirm>
@@ -160,7 +160,7 @@ export const ManagePrompt = (props) => {
         <>
             <Row justify="end">
                 <Col span={2}>
-                    <EditPrompt show={showModal} setShow={setShowModal} initData={modalInit} setInitData={setModalInit}/>
+                    <EditPrompt show={showModal} setShow={setShowModal} initData={modalInit} setInitData={setModalInit} pagination={table.pagination}/>
                     <Button type={'primary'} onClick={async () => {
                         setModalInit({
                             _id: undefined,
@@ -263,7 +263,7 @@ const EditPrompt = (props) => {
                                     params[key] = value
                                 }
                             })
-                            if (!await event.managePrompt.createPrompt(params)) {
+                            if (!await event.managePrompt.createPrompt(params,props.pagination)) {
                                 message.error('保存失败')
                                 return
                             } else {

@@ -4,25 +4,25 @@ import config from "../conf";
 import * as http from "../util/http";
 
 // 创建& 编辑
-export const createPrompt = async (formData) => {
+export const createPrompt = async (formData,pagination) => {
     const state = store.getState()
     let push_data = {...formData}
     let r = await axios.post(`${config.API_MANAGE_HOST}/v1/api/prompt_template`, push_data, {headers: {token: state.user.info.token}})
     let {headers, data} = http.getHttpHeardData(r,false)
     if (headers && data) {
-        await getPromptList({pageIndex: 1, pageSize: 50, total: 0})
+        await getPromptList(pagination)
         return true
     }
 }
 
 // 删除
-export const deletePrompt = async (_ids) => {
+export const deletePrompt = async (_ids,pagination) => {
     const state = store.getState()
     let data = {data:{_id:_ids}}
     let r = await axios.delete(`${config.API_MANAGE_HOST}/v1/api/prompt_template`, data, {headers: {token: state.user.info.token}})
     let res = http.getHttpHeardData(r,false)
     if (res.headers && res.data) {
-        await getPromptList({pageIndex: 1, pageSize: 50, total: 0})
+        await getPromptList(pagination)
         return true
     }
 }
@@ -36,7 +36,7 @@ export const getPromptList = async (pagination) => {
     if (headers && data) {
         let items = data.data.items || []
         store.dispatch({type: actions.setting.prompt.UPDATE_PROMPT, UPDATE_APIS: items})
-        return {pageIndex: data.data.pageIndex, pageSize: data.data.pageSize, total: data.data.total}
+        return {current:data.data.pageIndex,pageIndex: data.data.pageIndex, pageSize: data.data.pageSize, total: data.data.total}
     }
 }
 
